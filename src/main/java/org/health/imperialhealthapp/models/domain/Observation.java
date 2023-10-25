@@ -1,0 +1,29 @@
+package org.health.imperialhealthapp.models.domain;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.sql.Date;
+
+@Entity
+@Table(name = "observations")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Observation {
+    @Id
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "date")
+    private Date date;
+    @Column(name = "patient")
+    private Integer patient;
+    @Column(name = "value")
+    private Double value;
+    @OneToOne
+    @JoinColumn(name = "measurement_type", referencedColumnName = "measurement_type")
+    private MeasurementType measurementType;
+
+}
