@@ -3,8 +3,13 @@ package org.health.imperialhealthapp.services;
 import org.health.imperialhealthapp.mapper.ObservationMapper;
 import org.health.imperialhealthapp.models.GeneralResult;
 import org.health.imperialhealthapp.models.Status;
+import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +25,17 @@ public class ObservationService {
         this.repository = repository;
     }
 
-    public ResponseEntity<GeneralResult<List<ObservationDto>>> listAll() {
+    public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
         return ResponseEntity.ok(
-                GeneralResult.<List<ObservationDto>>builder().status(Status.SUCCESS).data(
-                        repository
-                                .findAll()
-                                .stream()
-                                .map(ObservationMapper.INSTANCE::convertToDto)
-                                .collect(Collectors.toList())
+                GeneralResult.<Slice<ObservationDto>>builder().status(Status.SUCCESS).data(
+                        new SliceImpl<>(
+                                repository
+                                        .findAll(pageable)
+                                        .getContent()
+                                        .stream()
+                                        .map(ObservationMapper.INSTANCE::convertToDto)
+                                        .collect(Collectors.toList())
+                        )
                 ).build()
         );
     }

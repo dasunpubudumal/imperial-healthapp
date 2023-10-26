@@ -5,6 +5,8 @@ import org.health.imperialhealthapp.models.GeneralResult;
 import org.health.imperialhealthapp.models.NetworkUtil;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.services.ObservationService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +28,8 @@ public class ObservationController {
     }
 
     @GetMapping
-    public ResponseEntity<GeneralResult<List<ObservationDto>>> listAll() {
-        return executor.execute(service::listAll);
+    public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
+        return executor.execute(() -> service.listAll(pageable));
     }
 
 }
