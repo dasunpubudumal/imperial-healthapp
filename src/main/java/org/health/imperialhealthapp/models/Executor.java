@@ -1,6 +1,6 @@
 package org.health.imperialhealthapp.models;
 
-import org.health.imperialhealthapp.exceptions.InvalidRequestException;
+import org.health.imperialhealthapp.exceptions.InternalServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -9,7 +9,7 @@ public class Executor {
     public <T> ResponseEntity<T> execute(Executable<T> executable) {
         try {
             return executable.execute();
-        } catch (InvalidRequestException e) {
+        } catch (InternalServerException e) {
             return new ResponseEntity(
                     GeneralResult.<T>builder().data(null).status(Status.FAILURE).build(),
                     HttpStatus.BAD_REQUEST
