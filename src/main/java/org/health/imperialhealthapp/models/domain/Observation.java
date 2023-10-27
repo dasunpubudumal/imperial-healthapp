@@ -28,4 +28,10 @@ public class Observation {
     @JoinColumn(name = "measurement_type", referencedColumnName = "measurement_type")
     private MeasurementType measurementType;
 
+    @PrePersist
+    private void uuid() {
+        if (Objects.isNull(this.id)) {
+            this.id = UUID.randomUUID();
+        }
+    }
 }

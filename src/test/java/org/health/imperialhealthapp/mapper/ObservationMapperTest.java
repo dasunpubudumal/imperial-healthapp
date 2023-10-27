@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,6 +52,7 @@ class ObservationMapperTest {
     @DisplayName("Check proper conversion of the dto mapper")
     void convertToDto() {
         Observation observation = Observation.builder()
+                .id(UUID.randomUUID())
                 .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
                 .date(Date.valueOf("2022-01-03"))
                 .patient(1)

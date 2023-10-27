@@ -44,6 +44,7 @@ class ObservationServiceTest {
                 .thenReturn(new SliceImpl<>(
                         List.of(
                                 Observation.builder()
+                                        .id(UUID.fromString(uuid))
                                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
                                         .date(Date.valueOf("2022-01-03"))
                                         .patient(1)
