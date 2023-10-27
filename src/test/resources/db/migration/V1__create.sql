@@ -19,3 +19,29 @@ CREATE TABLE observations
     value            DOUBLE PRECISION,
     PRIMARY KEY (id)
 );
+
+-- auto-generated definition
+create table users
+(
+    username   varchar(255) not null primary key,
+    first_name varchar(255),
+    last_name  varchar(255),
+    password   varchar(255)
+);
+
+-- auto-generated definition
+create table roles
+(
+    id        serial not null primary key,
+    role_name varchar(255)
+);
+
+
+-- auto-generated definition
+create table user_role
+(
+    username varchar(255) not null references users(username),
+    id       integer      not null references roles(id),
+    primary key (username, id)
+);
+
