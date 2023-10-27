@@ -42,4 +42,8 @@ public class ObservationController {
         return executor.execute(() -> service.update(observationDto, id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResult<Void>> delete(@PathVariable(value = "id") String id) {
+        return executor.execute(() -> service.delete(id));
+    }
 }

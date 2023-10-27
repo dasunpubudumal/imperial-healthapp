@@ -112,4 +112,17 @@ class ObservationControllerTest extends IntegrationTest {
         }
     }
 
+    @Test
+    @DisplayName("Check if delete method works")
+    @Order(6)
+    @Transactional
+    void delete() {
+        try {
+            controller.save(observationDto);
+            controller.delete(uuid);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
 }

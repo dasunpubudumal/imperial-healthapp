@@ -144,4 +144,31 @@ public class ObservationService {
         }
     }
 
+    /**
+     * Deletes an observation given by ID
+     * @param id observation ID
+     * @return response wrapped
+     */
+    @Transactional
+    public ResponseEntity<GeneralResult<Void>> delete(String id) {
+        if (Objects.isNull(id)) {
+            throw new InvalidRequestException(
+                    "ID not found in the request!"
+            );
+        }
+        try {
+            Observation observation = repository
+                    .findById(UUID.fromString(id))
+                    .orElseThrow(() -> new InvalidRequestException(
+                            String.format("No observation found for ID: %s", id)
+                    ));
+            repository.delete(observation);
+            return ResponseEntity.ok(
+                    GeneralResult.<Void>builder().status(Status.SUCCESS).build()
+            );
+        } catch (Exception e) {
+            throw new InternalServerException();
+        }
+    }
+
 }
