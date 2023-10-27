@@ -7,6 +7,7 @@ import org.health.imperialhealthapp.services.ObservationService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/observations")
@@ -21,6 +22,7 @@ public class ObservationController {
         this.service = service;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
         return executor.execute(() -> service.listAll(pageable));
