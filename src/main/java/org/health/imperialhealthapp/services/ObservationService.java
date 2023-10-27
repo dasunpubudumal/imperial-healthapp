@@ -106,10 +106,7 @@ public class ObservationService {
             return ResponseEntity.ok(
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()
             );
-        } catch (InvalidRequestException e) {
-            throw new InvalidRequestException("Error in the observation body.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new InvalidRequestException("Error in the observation body.");
         }
     }
