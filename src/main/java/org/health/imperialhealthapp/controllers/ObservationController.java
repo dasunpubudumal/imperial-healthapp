@@ -1,7 +1,7 @@
 package org.health.imperialhealthapp.controllers;
 
-import org.health.imperialhealthapp.models.Executor;
-import org.health.imperialhealthapp.models.GeneralResult;
+import org.health.imperialhealthapp.config.Executor;
+import org.health.imperialhealthapp.config.GeneralResult;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.services.ObservationService;
 import org.springframework.data.domain.Pageable;

@@ -1,11 +1,11 @@
 package org.health.imperialhealthapp.services;
 
-import org.health.imperialhealthapp.models.GeneralResult;
+import org.health.imperialhealthapp.config.GeneralResult;
 import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
+import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,10 @@ class ObservationServiceTest {
             ObservationRepository.class
     );
 
+    MeasurementTypeRepository measurementTypeRepository = mock(
+            MeasurementTypeRepository.class
+    );
+
     ObservationService service;
 
     @BeforeEach
@@ -44,7 +48,7 @@ class ObservationServiceTest {
                                         .build()
                         )
                 ));
-        service = new ObservationService(repository);
+        service = new ObservationService(repository, measurementTypeRepository);
     }
 
     @Test

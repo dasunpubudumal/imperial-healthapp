@@ -1,4 +1,4 @@
-package org.health.imperialhealthapp.models;
+package org.health.imperialhealthapp.config;
 
 import org.springframework.http.ResponseEntity;
 

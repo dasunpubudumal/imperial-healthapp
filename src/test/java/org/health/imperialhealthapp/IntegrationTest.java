@@ -2,6 +2,7 @@ package org.health.imperialhealthapp;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -57,6 +58,7 @@ public abstract class IntegrationTest {
     }
 
     @Test
+    @DisplayName("Assert Status of Postgres Container")
     public void test() {
         assertTrue(postgreSQLContainer.isRunning());
     }

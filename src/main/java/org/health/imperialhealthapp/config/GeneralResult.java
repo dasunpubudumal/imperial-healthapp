@@ -1,6 +1,7 @@
-package org.health.imperialhealthapp.models;
+package org.health.imperialhealthapp.config;
 
 import lombok.*;
+import org.health.imperialhealthapp.models.Status;
 
 @Getter
 @Setter

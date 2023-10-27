@@ -3,10 +3,12 @@ package org.health.imperialhealthapp.services;
 import org.health.imperialhealthapp.exceptions.InternalServerException;
 import org.health.imperialhealthapp.exceptions.InvalidRequestException;
 import org.health.imperialhealthapp.mapper.ObservationMapper;
-import org.health.imperialhealthapp.models.GeneralResult;
+import org.health.imperialhealthapp.config.GeneralResult;
 import org.health.imperialhealthapp.models.Status;
+import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
+import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,9 +25,11 @@ import java.util.stream.Collectors;
 public class ObservationService {
 
     private final ObservationRepository repository;
+    private final MeasurementTypeRepository measurementTypeRepository;
 
-    public ObservationService(ObservationRepository repository) {
+    public ObservationService(ObservationRepository repository, MeasurementTypeRepository measurementTypeRepository) {
         this.repository = repository;
+        this.measurementTypeRepository = measurementTypeRepository;
     }
 
     /**
@@ -92,11 +96,20 @@ public class ObservationService {
         }
         try {
             Observation convert = ObservationMapper.INSTANCE.convert(observationDto);
+            MeasurementType measurementType = measurementTypeRepository
+                    .findByMeasurementType(observationDto.getMeasurementType())
+                    .orElseThrow(
+                            () -> new InvalidRequestException("Measurement type not found")
+            );
+            convert.setMeasurementType(measurementType);
             repository.save(convert);
             return ResponseEntity.ok(
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()
             );
-        } catch (Exception e) {
+        } catch (InvalidRequestException e) {
+            throw new InvalidRequestException("Error in the observation body.");
+        }
+        catch (Exception e) {
             throw new InvalidRequestException("Error in the observation body.");
         }
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -16,7 +17,6 @@ import java.util.UUID;
 public class Observation {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private UUID id;
     @Column(name = "date")
     private Date date;
