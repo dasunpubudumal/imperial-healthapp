@@ -14,7 +14,7 @@ CREATE TABLE observations
     id               uuid DEFAULT uuid_generate_v4(),
     measurement_type VARCHAR(255) REFERENCES measurement_types(measurement_type
         ),
-    date             DATE,
+    date             TIMESTAMP WITH TIME ZONE,
     patient          INTEGER,
     value            DOUBLE PRECISION,
     PRIMARY KEY (id)
