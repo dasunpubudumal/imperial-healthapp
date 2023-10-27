@@ -44,7 +44,7 @@ The initial data model for `Observations` is as follows:
 
 - The model is already on `1-NF`. ✓
 - The relation can be described as observation(<u>`id`</u>, `type`, `date`, `patient`, `value`, `unit`) where `id` is the primary key of the relation `observation`. The ID is a unique attribute assigned upon persistence of a tuple.
-  - A composite key `(patient, date, type)` can also be considered as the primary key. I've used a surrogate key `id` which is an `SERIAL` field, because it might be possible for the user to update the candidate key and arrive at collisions if the composition is used.
+  - A composite key `(patient, date, type)` can also be considered as the primary key. I've used a surrogate key `id` which is an `UUID` field, because it might be possible for the user to update the candidate key and arrive at collisions if the composition is used.
 - Since the candidate key is singular, the table is in `2-NF`. ✓
 
 ## 3-NF Check
@@ -64,6 +64,8 @@ The initial data model for `Observations` is as follows:
 |  4  |    heart-rate    | 2023-09-04T08:54:33Z |   102   |  76   |
 |  5  | respirotary-rate | 2023-09-04T08:54:33Z |   102   |  18   |
 |  6  | skin-temperature | 2023-09-05T15:12:23Z |   103   | 37.8  |
+
+**Note:** The `ID` field is NOT a `SERIAL` filed as the table displayed above. It's a `UUID` field that stored UUIDs. I've displayed the IDs as integers in this README.md because it seemed more readable.
 
 ### `measurement_types` relation
 
