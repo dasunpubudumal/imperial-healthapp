@@ -15,7 +15,7 @@ import java.sql.Date;
 public class Observation {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private String id;
     @Column(name = "date")
     private Date date;
     @Column(name = "patient")
