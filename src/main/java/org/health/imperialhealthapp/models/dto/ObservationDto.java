@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class ObservationDto {
 
+    private String id;
     private String date;
     private Integer patient;
     private Double value;

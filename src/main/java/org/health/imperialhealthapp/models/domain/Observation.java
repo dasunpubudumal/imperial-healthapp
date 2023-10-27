@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "observations")
@@ -15,7 +16,8 @@ import java.sql.Date;
 public class Observation {
     @Id
     @Column(name = "id")
-    private String id;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private UUID id;
     @Column(name = "date")
     private Date date;
     @Column(name = "patient")

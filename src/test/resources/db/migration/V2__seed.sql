@@ -85,3 +85,15 @@ VALUES      ( 'skin-temperature',
               '2023-09-05T15:12:23Z',
               103,
               37.8 );
+
+INSERT INTO observations
+(id,
+ measurement_type,
+ date,
+ patient,
+ value)
+VALUES      ('a94d682f-e537-4d87-829f-c6d2af2ca0fc',
+             'skin-temperature',
+              '2023-09-05T15:12:23Z',
+              103,
+              37.8 );

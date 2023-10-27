@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,7 +64,7 @@ public class ObservationService {
             );
         }
         Observation observation = repository
-                .findById(Integer.parseInt(id))
+                .findById(UUID.fromString(id))
                 .orElseThrow(() -> new InvalidRequestException(
                 String.format("No observation found for ID: %s", id)
         ));
@@ -115,12 +116,12 @@ public class ObservationService {
         }
         try {
             repository
-                    .findById(Integer.parseInt(id))
+                    .findById(UUID.fromString(id))
                     .orElseThrow(() -> new InvalidRequestException(
                             String.format("No observation found for ID: %s", id)
                     ));
             Observation convert = ObservationMapper.INSTANCE.convert(observationDto);
-            convert.setId(id);
+            convert.setId(UUID.fromString(id));
             repository.save(convert);
             return ResponseEntity.ok(
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()

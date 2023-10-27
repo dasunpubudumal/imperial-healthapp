@@ -22,9 +22,9 @@ class ObservationMapperTest {
     @Test
     @DisplayName("Check proper conversion of the mapper")
     void convert() {
-
         ObservationDto dto = new ObservationDto(
-                "2020-01-01",
+                "a94d682f-e537-4d87-829f-c6d2af2ca0fc",
+                "2023-09-05T15:12:23Z",
                 10,
                 10.2,
                 "heart-rate",
@@ -38,7 +38,11 @@ class ObservationMapperTest {
         assertEquals(
                 new SimpleDateFormat( "yyyy-MM-dd" )
                         .format( observation.getDate() ),
-                "2020-01-01"
+                "2023-09-05"
+        );
+        assertEquals(
+                "a94d682f-e537-4d87-829f-c6d2af2ca0fc",
+                observation.getId().toString()
         );
         assertTrue(Objects.nonNull(observation.getMeasurementType()));
     }
