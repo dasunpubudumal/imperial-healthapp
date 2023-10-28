@@ -9,9 +9,13 @@ interface PageWrapperChildren {
 export const PageWrapper: React.FC<PageWrapperChildren> = ({children}) => {
     return (
         <>
-            <SiteHeader />
-            <Flex minHeight="50vh" w="100%" justifyContent="center" alignItems="center" alignContent="center" justifyItems="center">
-                <Box maxW="2400px" w="100%" p={4}>
+            <SiteHeader/>
+            <Flex
+                minHeight="50vh"
+                w="100%"
+                h="100%"
+                justifyContent="center" alignItems="center" alignContent="center" justifyItems="center">
+                <Box maxW="4038px" w="100%" p={4}>
                     {children}
                 </Box>
             </Flex>

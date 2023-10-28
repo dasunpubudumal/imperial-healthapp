@@ -1,21 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import {
+    Center,
     Flex,
     Heading,
+    IconButton, ModalOverlay,
     Skeleton,
     Table,
-    TableCaption,
     TableContainer,
     Tbody,
     Td,
     Th,
     Thead,
-    Tr
+    Tr, useDisclosure
 } from "@chakra-ui/react";
 import {PageWrapper} from "./PageWrapper";
 import {ObservationResponse} from "../util/models";
 import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
 import {useNavigate} from "react-router-dom";
+import {FaEdit} from "react-icons/fa";
+import ObservationEditComponent from "./ObservationEditComponent";
 
 const ObservationComponent = () => {
 
@@ -23,8 +26,34 @@ const ObservationComponent = () => {
         = useState<[ObservationResponse] | null>(null);
     const [isError, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [selectedObservation, setSelectedObservation]
+        = useState<ObservationResponse>({
+        id: '',
+        date: '',
+        patient: 0,
+        value: 0.0,
+        measurementType: '',
+        unit: ''
+    });
+
+    const OverlayOne = () => (
+        <ModalOverlay
+            bg='blackAlpha.300'
+            backdropFilter='blur(10px)'
+        />
+    );
+
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [overlay, setOverlay] = React.useState(<OverlayOne/>)
 
     const navigation = useNavigate();
+
+    const onEditClick = (observation: ObservationResponse) => {
+        console.log(`Selected Observation: ${JSON.stringify(selectedObservation)}`)
+        setSelectedObservation(observation);
+        setOverlay(<OverlayOne/>);
+        onOpen();
+    }
 
     useEffect(() => {
         (async () => {
@@ -69,38 +98,52 @@ const ObservationComponent = () => {
     return (
         <>
             <PageWrapper>
+                <ObservationEditComponent isOpen={isOpen}
+                                          onOpen={() => onEditClick(selectedObservation)}
+                                          onClose={onClose}
+                                          overlay={<OverlayOne/>}
+                                          observation={selectedObservation}
+                                          key={selectedObservation.id}
+                />
                 <Flex alignItems="center" justifyItems="center" alignContent="center" justifyContent="center">
                     <Heading>Observations View</Heading>
                 </Flex>
-                <TableContainer p={15} mt={5}>
-                    <Skeleton isLoaded={!loading}>
-                        <Table variant='striped'>
-                            <TableCaption>Observations table</TableCaption>
-                            <Thead>
-                                <Tr>
-                                    <Th>ID</Th>
-                                    <Th>Date</Th>
-                                    <Th>Patient</Th>
-                                    <Th>Measurement Type</Th>
-                                    <Th>Value</Th>
-                                    <Th>Unit</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {observations && observations.map((record: any, idx: number) => (
-                                    <Tr key={idx}>
-                                        <Td>{record.id}</Td>
-                                        <Td>{record.date}</Td>
-                                        <Td>{record.patient}</Td>
-                                        <Td>{record.measurementType}</Td>
-                                        <Td>{record.value}</Td>
-                                        <Td>{record.unit}</Td>
+                <Center>
+                    <TableContainer p={15} mt={5} w="120vh">
+                        <Skeleton isLoaded={!loading}>
+                            <Table variant='striped' size="md">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Date</Th>
+                                        <Th>Patient</Th>
+                                        <Th>Measurement Type</Th>
+                                        <Th>Value</Th>
+                                        <Th>Unit</Th>
+                                        <Th></Th>
                                     </Tr>
-                                ))}
-                            </Tbody>
-                        </Table>
-                    </Skeleton>
-                </TableContainer>
+                                </Thead>
+                                <Tbody>
+                                    {observations && observations.map((record: ObservationResponse, idx: number) => (
+                                        <Tr key={idx}>
+                                            <Td>{record.date}</Td>
+                                            <Td>{record.patient}</Td>
+                                            <Td>{record.measurementType}</Td>
+                                            <Td>{record.value}</Td>
+                                            <Td>{record.unit}</Td>
+                                            <Td><IconButton
+                                                isRound={true}
+                                                colorScheme='blue'
+                                                aria-label='Edit'
+                                                icon={<FaEdit/>}
+                                                onClick={() => onEditClick(record)}
+                                            /></Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </Skeleton>
+                    </TableContainer>
+                </Center>
             </PageWrapper>
         </>
     );

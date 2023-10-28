@@ -4,16 +4,18 @@ import {ChakraBaseProvider, theme} from "@chakra-ui/react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import LoginComponent from "./components/LoginComponent";
 import ObservationComponent from "./components/ObservationComponent";
-import {PageWrapper} from "./components/PageWrapper";
+import ErrorComponent from "./components/ErrorComponent";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LoginComponent/>,
+        errorElement: <ErrorComponent message={"Error in loading the page"} title={"Loading Error"} />
     },
     {
         path: "/observations",
-        element: <ObservationComponent/>
+        element: <ObservationComponent/>,
+        errorElement: <ErrorComponent message={"Error in loading the page"} title={"Loading Error"} />
     }
 ]);
 
