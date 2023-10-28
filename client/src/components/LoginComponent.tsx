@@ -14,7 +14,7 @@ import {
     FormErrorMessage, Skeleton, useToast
 } from "@chakra-ui/react";
 import ErrorComponent from "./ErrorComponent";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {SESSION_STORAGE_KEY} from "../util/constants";
 
 const LoginComponent = () => {
@@ -32,6 +32,7 @@ const LoginComponent = () => {
 
     const toast = useToast();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const onSubmit = async (username: string, password: string): Promise<void> => {
         let error: boolean = false;
@@ -82,6 +83,10 @@ const LoginComponent = () => {
 
     return (
         <>
+            {
+                location.state.redirect &&
+                <ErrorComponent message="Please login again" title="Token expired."/>
+            }
             {
                 validationError &&
                 <ErrorComponent message="Error in authenticating the user" title="Invalid credentials"/>
