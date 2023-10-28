@@ -14,6 +14,8 @@ import {
     FormErrorMessage, Skeleton, useToast
 } from "@chakra-ui/react";
 import ErrorComponent from "./ErrorComponent";
+import {useNavigate} from "react-router-dom";
+import {SESSION_STORAGE_KEY} from "../util/constants";
 
 const LoginComponent = () => {
 
@@ -29,6 +31,7 @@ const LoginComponent = () => {
     const isPasswordError = password === ''
 
     const toast = useToast();
+    const navigate = useNavigate();
 
     const onSubmit = async (username: string, password: string): Promise<void> => {
         let error: boolean = false;
@@ -46,13 +49,18 @@ const LoginComponent = () => {
                 })
             });
             const authResponse = await fetchReq.json();
-            console.log(fetchReq.status);
-            if (fetchReq.status === 200) {
+            let extractedToken = authResponse.data.token;
+            if (fetchReq.status === 200 && authResponse.data && extractedToken) {
                 setToken(
-                    authResponse.data.token
+                    extractedToken
+                );
+                sessionStorage.setItem(
+                    SESSION_STORAGE_KEY,
+                    extractedToken
                 );
                 error = false;
                 setValidationError(false);
+                navigate('/observations');
             } else {
                 error = true;
                 setValidationError(true);
