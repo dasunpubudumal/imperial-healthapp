@@ -14,8 +14,7 @@ import java.util.TimeZone;
 @UtilityClass
 public class DateMapper {
     public static String asString(OffsetDateTime date) {
-        return date != null ? new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" )
-                .format( date ) : null;
+        return date != null ? date.toString() : null;
     }
 
     public static OffsetDateTime asDate(String date) {

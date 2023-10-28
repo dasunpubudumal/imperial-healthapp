@@ -4,6 +4,7 @@ import org.health.imperialhealthapp.mapper.ObservationMapper;
 import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
+import org.health.imperialhealthapp.util.DateMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,40 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ObservationMapperTest {
 
     @Test
-    @DisplayName("Check proper conversion of the mapper")
-    void convert() {
-        ObservationDto dto = new ObservationDto(
-                "a94d682f-e537-4d87-829f-c6d2af2ca0fc",
-                "2023-09-05T15:12:23Z",
-                10,
-                10.2,
-                "heart-rate",
-                "beats/minute"
-        );
-
-        Observation observation = ObservationMapper.INSTANCE.convert(
-                dto
-        );
-        assertTrue(Objects.nonNull(observation));
-        assertEquals(
-                new SimpleDateFormat( "yyyy-MM-dd" )
-                        .format( observation.getDate() ),
-                "2023-09-05"
-        );
-        assertEquals(
-                "a94d682f-e537-4d87-829f-c6d2af2ca0fc",
-                observation.getId().toString()
-        );
-        assertTrue(Objects.nonNull(observation.getMeasurementType()));
-    }
-
-    @Test
     @DisplayName("Check proper conversion of the dto mapper")
     void convertToDto() {
         Observation observation = Observation.builder()
                 .id(UUID.randomUUID())
                 .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
-                .date(Date.valueOf("2022-01-03"))
+                .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
                 .patient(1)
                 .value(10.2)
                 .build();

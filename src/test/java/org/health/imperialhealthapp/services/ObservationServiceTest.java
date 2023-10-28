@@ -6,6 +6,7 @@ import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
+import org.health.imperialhealthapp.util.DateMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class ObservationServiceTest {
                                 Observation.builder()
                                         .id(UUID.fromString(uuid))
                                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
-                                        .date(Date.valueOf("2022-01-03"))
+                                        .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
                                         .patient(1)
                                         .value(10.2)
                                         .build()
@@ -56,7 +57,7 @@ class ObservationServiceTest {
                 Optional.ofNullable(Observation.builder()
                         .id(UUID.fromString(uuid))
                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
-                        .date(Date.valueOf("2022-01-03"))
+                        .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
                         .patient(1)
                         .value(10.2)
                         .build())
@@ -69,7 +70,7 @@ class ObservationServiceTest {
                 Observation.builder()
                         .id(UUID.fromString(uuid))
                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
-                        .date(Date.valueOf("2022-01-03"))
+                        .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
                         .patient(1)
                         .value(10.2)
                         .build()
