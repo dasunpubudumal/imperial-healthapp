@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,13 +20,13 @@ public class Observation {
     @Column(name = "id")
     private UUID id;
     @Column(name = "date")
-    private Date date;
+    private OffsetDateTime date;
     @Column(name = "patient")
     private Integer patient;
     @Column(name = "value")
     private Double value;
-    @OneToOne
-    @JoinColumn(name = "measurement_type", referencedColumnName = "measurement_type")
+    @ManyToOne
+    @JoinColumn(name = "measurement_type", insertable = false, updatable = false)
     private MeasurementType measurementType;
 
     @PrePersist
