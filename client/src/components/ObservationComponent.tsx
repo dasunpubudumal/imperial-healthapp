@@ -1,5 +1,11 @@
-export const observationData = {
-    "data": {
+import React, {useEffect, useState} from 'react';
+import {Flex, Heading, Spacer, Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
+import {PageWrapper} from "./PageWrapper";
+
+const ObservationComponent = () => {
+
+    const ob = {
+        "data": {
         "content": [
             {
                 "id": "bb683f36-5924-44e7-8689-b1be60afc80c",
@@ -66,18 +72,62 @@ export const observationData = {
                 "unit": "beats/minute"
             }
         ],
-        "pageable": "INSTANCE",
-        "first": true,
-        "last": true,
-        "size": 8,
-        "number": 0,
-        "sort": {
+            "pageable": "INSTANCE",
+            "first": true,
+            "last": true,
+            "size": 8,
+            "number": 0,
+            "sort": {
             "empty": true,
-            "sorted": false,
-            "unsorted": true
+                "sorted": false,
+                "unsorted": true
         },
         "numberOfElements": 8,
-        "empty": false
+            "empty": false
     },
-    "status": "SUCCESS"
+        "status": "SUCCESS"
+    }
+
+    useEffect(() => {
+
+    }, []);
+
+    return (
+        <>
+            <PageWrapper>
+                <Flex alignItems="center" justifyItems="center" alignContent="center" justifyContent="center">
+                    <Heading>Observations View</Heading>
+                </Flex>
+                <TableContainer pl={5} pr={5} mt={5}>
+                    <Table variant='simple'>
+                        <TableCaption>Observations table</TableCaption>
+                        <Thead>
+                            <Tr>
+                                <Th>ID</Th>
+                                <Th>Date</Th>
+                                <Th>Patient</Th>
+                                <Th>Measurement Type</Th>
+                                <Th>Value</Th>
+                                <Th>Unit</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {ob.data.content.map((record: any, idx: number) => (
+                                <Tr key={idx}>
+                                    <Td>{record.id}</Td>
+                                    <Td>{record.date}</Td>
+                                    <Td>{record.patient}</Td>
+                                    <Td>{record.measurementType}</Td>
+                                    <Td>{record.value}</Td>
+                                    <Td>{record.unit}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </PageWrapper>
+        </>
+    );
 };
+
+export default ObservationComponent;
