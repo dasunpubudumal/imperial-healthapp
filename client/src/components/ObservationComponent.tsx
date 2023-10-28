@@ -19,6 +19,8 @@ import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} fr
 import {useNavigate} from "react-router-dom";
 import {FaEdit} from "react-icons/fa";
 import ObservationEditComponent from "./ObservationEditComponent";
+import {DeleteIcon} from "@chakra-ui/icons";
+import ObservationDeleteComponent from "./ObservationDeleteComponent";
 
 const ObservationComponent = () => {
 
@@ -44,54 +46,100 @@ const ObservationComponent = () => {
     );
 
     const {isOpen, onOpen, onClose} = useDisclosure();
+    const {
+        isOpen: isOpenDeleteModal,
+        onOpen: onOpenDeleteModal,
+        onClose: onCloseDeletetModal
+    } = useDisclosure()
     const [overlay, setOverlay] = React.useState(<OverlayOne/>)
 
     const navigation = useNavigate();
 
     const onEditClick = (observation: ObservationResponse) => {
-        console.log(`Selected Observation: ${JSON.stringify(selectedObservation)}`)
         setSelectedObservation(observation);
         setOverlay(<OverlayOne/>);
         onOpen();
     }
 
+    const onDeleteClick = (observation: ObservationResponse) => {
+        setSelectedObservation(observation);
+        setOverlay(<OverlayOne/>);
+        onOpenDeleteModal();
+    }
+
+    const deleteRecord = async (observationId: string): Promise<boolean> => {
+        try {
+            const deleteReq = await fetch(`/observations/${observationId}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${sessionStorage.getItem(SESSION_STORAGE_KEY)}`
+                }
+            });
+            if (deleteReq.status === HTTP_FORBIDDEN || deleteReq.status === HTTP_UNAUTHORIZED) {
+                sessionStorage.removeItem(SESSION_STORAGE_KEY);
+                navigation('/', {
+                    state: {
+                        redirect: true
+                    }
+                });
+                return false;
+            }
+            if (deleteReq.status !== HTTP_SUCCESS) {
+                setError(true);
+            } else {
+                setError(false);
+                await loadObservations();
+                return true;
+            }
+        } catch (err) {
+            setError(true);
+            return false;
+        }
+        return false;
+    }
+
+    const loadObservations = async (): Promise<void> => {
+        try {
+            setLoading(true);
+            setError(false);
+            const observationsReq = await fetch(`/observations?page=${encodeURIComponent(0)}&size=${20}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${sessionStorage.getItem(SESSION_STORAGE_KEY)}`
+                    }
+                });
+            if (observationsReq.status === HTTP_FORBIDDEN || observationsReq.status === HTTP_UNAUTHORIZED) {
+                sessionStorage.removeItem(SESSION_STORAGE_KEY);
+                navigation('/', {
+                    state: {
+                        redirect: true
+                    }
+                });
+            }
+            if (observationsReq.status !== HTTP_SUCCESS) {
+                setError(true);
+            }
+            const observationsResponse = await observationsReq.json();
+            if (observationsResponse.data && observationsResponse.data.content) {
+                setObservations(
+                    observationsResponse.data.content
+                );
+                setError(false);
+            } else {
+                setError(true);
+            }
+        } catch (err) {
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         (async () => {
-            try {
-                setLoading(true);
-                setError(false);
-                const observationsReq = await fetch(`/observations?page=${encodeURIComponent(0)}&size=${20}`,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': `Bearer ${sessionStorage.getItem(SESSION_STORAGE_KEY)}`
-                        }
-                    });
-                if (observationsReq.status === HTTP_FORBIDDEN || observationsReq.status === HTTP_UNAUTHORIZED) {
-                    sessionStorage.removeItem(SESSION_STORAGE_KEY);
-                    navigation('/', {
-                        state: {
-                            redirect: true
-                        }
-                    });
-                }
-                if (observationsReq.status !== HTTP_SUCCESS) {
-                    setError(true);
-                }
-                const observationsResponse = await observationsReq.json();
-                if (observationsResponse.data && observationsResponse.data.content) {
-                    setObservations(
-                        observationsResponse.data.content
-                    );
-                    setError(false);
-                } else {
-                    setError(true);
-                }
-            } catch (err) {
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
+            await loadObservations();
         })();
     }, []);
 
@@ -104,6 +152,14 @@ const ObservationComponent = () => {
                                           overlay={<OverlayOne/>}
                                           observation={selectedObservation}
                                           key={selectedObservation.id}
+                />
+                <ObservationDeleteComponent isOpen={isOpenDeleteModal}
+                                            onOpen={() => onDeleteClick(selectedObservation)}
+                                            onClose={onCloseDeletetModal}
+                                            overlay={<OverlayOne/>}
+                                            observation={selectedObservation}
+                                            key={`#${selectedObservation.id}`}
+                                            deleteObservation={() => deleteRecord(selectedObservation.id)}
                 />
                 <Flex alignItems="center" justifyItems="center" alignContent="center" justifyContent="center">
                     <Heading>Observations View</Heading>
@@ -119,6 +175,7 @@ const ObservationComponent = () => {
                                         <Th>Measurement Type</Th>
                                         <Th>Value</Th>
                                         <Th>Unit</Th>
+                                        <Th></Th>
                                         <Th></Th>
                                     </Tr>
                                 </Thead>
@@ -136,6 +193,13 @@ const ObservationComponent = () => {
                                                 aria-label='Edit'
                                                 icon={<FaEdit/>}
                                                 onClick={() => onEditClick(record)}
+                                            /></Td>
+                                            <Td><IconButton
+                                                isRound={true}
+                                                colorScheme='red'
+                                                aria-label='Delete'
+                                                icon={<DeleteIcon/>}
+                                                onClick={() => onDeleteClick(record)}
                                             /></Td>
                                         </Tr>
                                     ))}

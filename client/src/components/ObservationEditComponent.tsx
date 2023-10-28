@@ -63,7 +63,10 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
         102,
         103,
         104,
-        105
+        105,
+        110,
+        120,
+        130
     ];
 
     const measurementTypes = {
@@ -77,7 +80,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
             <Modal isCentered isOpen={isOpen} onClose={onClose}>
                 {overlay}
                 <ModalContent>
-                    <ModalHeader>Modal Title</ModalHeader>
+                    <ModalHeader>Edit Observation</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody pb={6}>
                         <FormControl>
@@ -95,7 +98,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Measurement Type</FormLabel>
-                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect} value={measurementType}>
+                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect} value={measurementType} disabled={true}>
                                 {Object.keys(measurementTypes).map((option, idx) => (
                                     <option key={idx} value={option}>{option}</option>
                                 ))}
