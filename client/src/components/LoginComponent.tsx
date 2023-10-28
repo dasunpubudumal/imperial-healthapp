@@ -11,10 +11,9 @@ import {
     Input,
     Button,
     FormHelperText,
-    FormErrorMessage
+    FormErrorMessage, Skeleton, useToast
 } from "@chakra-ui/react";
 import ErrorComponent from "./ErrorComponent";
-import {ErrorResponse} from "react-router-dom";
 
 const LoginComponent = () => {
 
@@ -29,7 +28,10 @@ const LoginComponent = () => {
     const isUsernameError = username === ''
     const isPasswordError = password === ''
 
+    const toast = useToast();
+
     const onSubmit = async (username: string, password: string): Promise<void> => {
+        let error: boolean = false;
         try {
             setLoading(true);
             const fetchReq = await fetch('/auth/login', {
@@ -44,31 +46,43 @@ const LoginComponent = () => {
                 })
             });
             const authResponse = await fetchReq.json();
+            console.log(fetchReq.status);
             if (fetchReq.status === 200) {
                 setToken(
                     authResponse.data.token
                 );
+                error = false;
+                setValidationError(false);
             } else {
+                error = true;
                 setValidationError(true);
             }
         } catch (err) {
+            error = true;
             setValidationError(true);
         } finally {
             setLoading(false);
+            toast({
+                title: error ? 'Login Failed' : 'Successful login.',
+                description: "Login",
+                status: error ? 'error' : 'success',
+                duration: 9000,
+                isClosable: true,
+            })
         }
     }
 
     return (
         <>
+            {
+                validationError &&
+                <ErrorComponent message="Error in authenticating the user" title="Invalid credentials"/>
+            }
             <Flex
                 minH={'100vh'}
                 align={'center'}
                 justify={'center'}
                 bg={useColorModeValue('gray.50', 'gray.800')}>
-                {
-                    validationError &&
-                    <ErrorComponent message="Error in authenticating the user" title="Invalid credentials"/>
-                }
                 <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                     <Stack align={'center'}>
                         <Heading fontSize={'4xl'}>Sign in to your account</Heading>
@@ -80,28 +94,32 @@ const LoginComponent = () => {
                         p={8}>
                         <Stack spacing={4}>
                             <FormControl id="username" isInvalid={isUsernameError} isRequired>
-                                <FormLabel>Username</FormLabel>
-                                <Input value={username} onChange={handleUsernameChange}
-                                       placeholder="Enter your username"/>
-                                {!isUsernameError ? (
-                                    <FormHelperText>
-                                        Enter your login username.
-                                    </FormHelperText>
-                                ) : (
-                                    <FormErrorMessage>Username is required.</FormErrorMessage>
-                                )}
+                                <Skeleton isLoaded={!loading}>
+                                    <FormLabel>Username</FormLabel>
+                                    <Input value={username} onChange={handleUsernameChange}
+                                           placeholder="Enter your username"/>
+                                    {!isUsernameError ? (
+                                        <FormHelperText>
+                                            Enter your login username.
+                                        </FormHelperText>
+                                    ) : (
+                                        <FormErrorMessage>Username is required.</FormErrorMessage>
+                                    )}
+                                </Skeleton>
                             </FormControl>
                             <FormControl id="password" isInvalid={isUsernameError} isRequired>
-                                <FormLabel>Password</FormLabel>
-                                <Input type="password" value={password} onChange={handlePasswordChange}
-                                       placeholder="Enter your password"/>
-                                {!isPasswordError ? (
-                                    <FormHelperText>
-                                        Enter your login password.
-                                    </FormHelperText>
-                                ) : (
-                                    <FormErrorMessage>Password is required.</FormErrorMessage>
-                                )}
+                                <Skeleton isLoaded={!loading}>
+                                    <FormLabel>Password</FormLabel>
+                                    <Input type="password" value={password} onChange={handlePasswordChange}
+                                           placeholder="Enter your password"/>
+                                    {!isPasswordError ? (
+                                        <FormHelperText>
+                                            Enter your login password.
+                                        </FormHelperText>
+                                    ) : (
+                                        <FormErrorMessage>Password is required.</FormErrorMessage>
+                                    )}
+                                </Skeleton>
                             </FormControl>
                             <Stack spacing={10}>
                                 <Stack
