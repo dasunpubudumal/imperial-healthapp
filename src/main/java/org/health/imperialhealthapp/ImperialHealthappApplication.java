@@ -3,6 +3,7 @@ package org.health.imperialhealthapp;
 import lombok.extern.slf4j.Slf4j;
 import org.health.imperialhealthapp.models.domain.Role;
 import org.health.imperialhealthapp.models.domain.User;
+import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
 import org.health.imperialhealthapp.repositories.RoleRepository;
 import org.health.imperialhealthapp.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Set;
 import java.util.UUID;
+
+import static org.health.imperialhealthapp.util.Initializer.initializeMeasurementTypes;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -31,10 +34,12 @@ public class ImperialHealthappApplication {
 	CommandLineRunner run(
 			UserRepository userRepository,
 			RoleRepository roleRepository,
-			PasswordEncoder bCryptPasswordEncoder) {
+			PasswordEncoder bCryptPasswordEncoder,
+			MeasurementTypeRepository measurementTypeRepository) {
 		String encode = bCryptPasswordEncoder.encode(uuid);
 		log.info("Encoded password: {}", encode);
 		return args -> {
+			initializeMeasurementTypes(measurementTypeRepository);
 			if (roleRepository.findByRoleName("ADMIN").isPresent()) return;
 			Role adminRole = roleRepository.save(
 					Role.builder().roleName("ADMIN").build()
