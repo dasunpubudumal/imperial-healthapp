@@ -26,7 +26,7 @@ public class Observation {
     @Column(name = "value")
     private Double value;
     @ManyToOne
-    @JoinColumn(name = "measurement_type", insertable = false, updatable = false)
+    @JoinColumn(name = "measurement_type", updatable = false)
     private MeasurementType measurementType;
 
     @PrePersist

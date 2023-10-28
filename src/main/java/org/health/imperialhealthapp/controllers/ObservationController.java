@@ -22,7 +22,6 @@ public class ObservationController {
         this.service = service;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
         return executor.execute(() -> service.listAll(pageable));

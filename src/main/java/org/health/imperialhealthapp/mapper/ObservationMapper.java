@@ -10,6 +10,7 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 import java.sql.Date;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
@@ -44,12 +45,12 @@ public interface ObservationMapper {
     }
 
     @Named(value = "dateMapDto")
-    default String dateMapDto(Date date) {
+    default String dateMapDto(OffsetDateTime date) {
         return DateMapper.asString(date);
     }
 
     @Named(value = "dateMap")
-    default Date dateMap(String date) {
+    default OffsetDateTime dateMap(String date) {
         return DateMapper.asDate(date);
     }
 
