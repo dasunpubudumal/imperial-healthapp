@@ -36,3 +36,5 @@ node_modules
 src/main/resources/static
 postgres-data
 postgres-data/*
+node
+node/*
