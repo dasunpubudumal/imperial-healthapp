@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
-    Button,
+    Box,
+    Button, Flex,
     FormControl,
     FormLabel,
     Input,
@@ -10,13 +11,14 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    Select,
+    Select, Spacer,
     useToast
 } from "@chakra-ui/react";
 import {ObservationResponse} from "../util/models";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
 import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
 import {useNavigate} from "react-router-dom";
+import {concatenateDate, extractTime} from "../util/dateUtil";
 
 interface ObservationEditProps {
     isOpen: boolean;
@@ -45,9 +47,30 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
     const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [value, setValue] = useState<number>(observation.value);
+    const [hours, setHours] = useState<string>(extractTime(observation.date).h);
+    const [minutes, setMinutes] = useState<string>(extractTime(observation.date).m);
 
     const toast = useToast();
     const navigation = useNavigate();
+
+    const checkValidHours = hours.length === 0 || minutes.length === 0
+        || (hours.length == 2 && parseInt(hours) > 23) || (minutes.length == 2 && parseInt(minutes) > 59);
+
+    const onChangeHours = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        if (e.target.value.length < 3) {
+            setHours(e.target.value);
+        } else {
+            setHours('00');
+        }
+    }
+
+    const onChangeMinutes = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        if (e.target.value.length < 3) {
+            setMinutes(e.target.value);
+        } else {
+            setHours('00');
+        }
+    }
 
     const onPatientSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value && e.target.value.length > 0) {
@@ -200,10 +223,17 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl mt={4}>
-                            <FormLabel>Date</FormLabel>
-                            <SingleDatepicker onDateChange={setDate} name="date-input"
-                                              date={new Date(date)}/>
+                        <FormControl mt={4} isInvalid={checkValidHours}>
+                            <FormLabel>Date & Time</FormLabel>
+                            <Flex gap={6}>
+                                <SingleDatepicker onDateChange={setDate} name="date-input"
+                                                  date={new Date(date)}/>
+                                <Spacer/>
+                                <Flex gap={2}>
+                                    <Input placeholder="HH" value={hours} onChange={onChangeHours} type="number"/>
+                                    <Input placeholder="mm" value={minutes} onChange={onChangeMinutes} type="number"/>
+                                </Flex>
+                            </Flex>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Measurement Type</FormLabel>
@@ -236,7 +266,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                             isEdit && <Button colorScheme="blue" onClick={() => onObservationUpdate(
                                 {
                                     id: observation.id,
-                                    date: date.toISOString(),
+                                    date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
                                     value: value,
                                     measurementType: measurementType,
@@ -248,7 +278,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                             !isEdit && <Button colorScheme="green" onClick={() => onObservationSave(
                                 {
                                     id: observation.id,
-                                    date: date.toISOString(),
+                                    date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
                                     value: value,
                                     measurementType: measurementType,
