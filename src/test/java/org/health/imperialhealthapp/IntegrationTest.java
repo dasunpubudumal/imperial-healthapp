@@ -28,6 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(initializers = IntegrationTest.TestcontainersInitializer.class)
 public abstract class IntegrationTest {
 
+    static {
+        System.setProperty("ENVIRONMENT", "dev");
+    }
+
     @Container
     protected static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.0")
             .withDatabaseName("healthapp")

@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.health.imperialhealthapp.models.domain.Role;
 import org.health.imperialhealthapp.models.domain.User;
 import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
+import org.health.imperialhealthapp.repositories.ObservationRepository;
 import org.health.imperialhealthapp.repositories.RoleRepository;
 import org.health.imperialhealthapp.repositories.UserRepository;
+import org.health.imperialhealthapp.util.FakeObservationGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,15 +32,18 @@ public class ImperialHealthappApplication {
 		SpringApplication.run(ImperialHealthappApplication.class, args);
 	}
 
-	String uuid = UUID.randomUUID().toString();
+	@Value("${environment}")
+	private String environment;
 
 	@Bean
 	CommandLineRunner run(
 			UserRepository userRepository,
 			RoleRepository roleRepository,
 			PasswordEncoder bCryptPasswordEncoder,
-			MeasurementTypeRepository measurementTypeRepository) {
-		String encode = bCryptPasswordEncoder.encode(uuid);
+			MeasurementTypeRepository measurementTypeRepository,
+			ObservationRepository observationRepository) {
+		String encode = bCryptPasswordEncoder.encode("admin");
+		log.info("Environment: {}", environment);
 		log.info("Encoded password: {}", encode);
 		return args -> {
 			initializeMeasurementTypes(measurementTypeRepository);
@@ -56,6 +63,10 @@ public class ImperialHealthappApplication {
 					.roles(adminRoles)
 					.build();
 			userRepository.save(adminUser);
+			if (Objects.nonNull(environment) && !environment.equals("dev"))
+				observationRepository.saveAll(FakeObservationGenerator.generateObservations());
+			else {
+			}
 		};
 	}
 
