@@ -42,6 +42,22 @@ const ObservationComponent = () => {
         measurementType: '',
         unit: ''
     });
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [pagesLeft, setPagesLeft] = useState<number>(0);
+    const [isFirst, setIsFirst] = useState<boolean>(true);
+    const [isLast, setIsLast] = useState<boolean>(false);
+
+    const onNextPage = (currentPage: number) => {
+        setCurrentPage(currentPage + 1);
+        setPagesLeft(pagesLeft - 1)
+        loadObservations(currentPage + 1).catch(err => setError(true));
+    }
+
+    const onPrevPage = (currentPage: number) => {
+        setCurrentPage(currentPage - 1);
+        setPagesLeft(pagesLeft + 1)
+        loadObservations(currentPage - 1).catch(err => setError(true));
+    }
 
     const OverlayOne = () => (
         <ModalOverlay
@@ -67,12 +83,12 @@ const ObservationComponent = () => {
 
     const onUpdateClose = () => {
         onClose();
-        loadObservations().catch(err => setError(true));
+        loadObservations(0).catch(err => setError(true));
     }
 
     const onAddClose = () => {
         onCloseAddModal();
-        loadObservations().catch(err => setError(true));
+        loadObservations(0).catch(err => setError(true));
     }
 
     const onEditClick = (observation: ObservationResponse) => {
@@ -114,7 +130,7 @@ const ObservationComponent = () => {
                 setError(true);
             } else {
                 setError(false);
-                await loadObservations();
+                await loadObservations(0);
                 return true;
             }
         } catch (err) {
@@ -124,11 +140,11 @@ const ObservationComponent = () => {
         return false;
     }
 
-    const loadObservations = async (): Promise<void> => {
+    const loadObservations = async (pageNumber: number): Promise<void> => {
         try {
             setLoading(true);
             setError(false);
-            const observationsReq = await fetch(`/api/observations?page=${encodeURIComponent(0)}&size=${4}`,
+            const observationsReq = await fetch(`/api/observations?page=${encodeURIComponent(pageNumber)}&size=${4}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -148,6 +164,13 @@ const ObservationComponent = () => {
             }
             const observationsResponse = await observationsReq.json();
             if (observationsResponse.data && observationsResponse.data.content) {
+                if (observationsResponse.data.totalPages > currentPage && !observationsResponse.data.last) {
+                    setPagesLeft(observationsResponse.data.totalPages - (currentPage + 1));
+                } else {
+                    setPagesLeft(0);
+                }
+                setIsFirst(observationsResponse.data.first);
+                setIsLast(observationsResponse.data.last);
                 setObservations(
                     observationsResponse.data.content
                 );
@@ -164,7 +187,7 @@ const ObservationComponent = () => {
 
     useEffect(() => {
         (async () => {
-            await loadObservations();
+            await loadObservations(0);
         })();
     }, []);
 
@@ -277,9 +300,11 @@ const ObservationComponent = () => {
                         <Flex mt={2} gap={2} alignItems="right" justifyItems="right" alignContent="right"
                               justifyContent="right">
                             <IconButton variant='outline' isRound={true} aria-label={"next"} colorScheme='teal'
-                                        icon={<FaArrowLeft/>}/>
+                                        icon={<FaArrowLeft/>} onClick={() => onPrevPage(currentPage)}
+                                        isDisabled={isFirst}/>
                             <IconButton variant='outline' isRound={true} aria-label={"next"} colorScheme='teal'
-                                        icon={<FaArrowRight/>}/>
+                                        icon={<FaArrowRight/>} onClick={() => onNextPage(currentPage)}
+                                        isDisabled={isLast}/>
                         </Flex>
                     </TableContainer>
                 </Center>
