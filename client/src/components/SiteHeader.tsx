@@ -24,7 +24,7 @@ export const SiteHeader: React.FC = () => {
             </Box>
             <Spacer />
             <Flex pr={2} justifyItems="center" alignItems="center">
-                <Button rightIcon={<FaSignOutAlt />} colorScheme='blue' variant='solid'>
+                <Button rightIcon={<FaSignOutAlt />} colorScheme='blue' variant='solid' onClick={onSignOut}>
                     Logout
                 </Button>
             </Flex>
