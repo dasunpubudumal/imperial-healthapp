@@ -85,6 +85,7 @@ The initial data model for `Observations` is as follows:
   - Authorization is provided via a `JWT` token validated through a security chain in Spring.
     - Authorization is completely _stateless_. No token storage - either in-memory nor persisted - occur.
     - [Spring OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html) was used to facilitate JWT generation, validation and verification.
+    - Tokens are supposed to expire 15 minutes after they were issued. Currently, no refresh-token mechanism exists. In case of an expiry, the UI directs the user for a fresh login.
   - By default, a user with credentials `admin/admin` is populated upon application start. This user has `ADMIN` privileges.
     - API endpoints currently aren't pre-authorized for different roles, although the infrastructure allows it.
 - JPA connects the business-logic to the data-layer. Therefore, no JDBC SQL-level logic are present in the codebase.
