@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -111,6 +112,7 @@ public class AuthenticationService {
                JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                        .issuer("self")
                        .issuedAt(now)
+                       .expiresAt(now.plus(15, ChronoUnit.MINUTES))
                        .subject(authentication.getName())
                        .claim("roles", roles)
                        .build();
