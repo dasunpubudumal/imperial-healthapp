@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
     Button, FormControl, FormLabel, Input,
     Modal,
@@ -7,7 +7,7 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader, Select,
-    Text, useToast
+    useToast
 } from "@chakra-ui/react";
 import {ObservationResponse} from "../util/models";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
@@ -21,11 +21,20 @@ interface ObservationEditProps {
     onOpen: (selectedObservation: any) => void;
     overlay: React.ReactNode;
     observation: ObservationResponse
+    isEdit: boolean;
 }
 
-const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpen, onUpdateClose, onClose, overlay, observation}) => {
+const ObservationEditComponent: React.FC<ObservationEditProps> = ({
+                                                                      isOpen,
+                                                                      onOpen,
+                                                                      onUpdateClose,
+                                                                      onClose,
+                                                                      overlay,
+                                                                      observation,
+                                                                      isEdit
+                                                                  }) => {
 
-    const [date, setDate] = useState<Date>(new Date());
+    const [date, setDate] = useState<Date>(new Date(observation.date));
     const [patient, setPatient] = useState<number>(observation.patient);
     const [measurementType, setMeasurementType] = useState<string>(observation.measurementType);
     const [unit, setUnit] = useState<string>(observation.unit);
@@ -38,7 +47,6 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
 
     const onPatientSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value && e.target.value.length > 0) {
-            console.log(`Setting patient: ${e.target.value}`)
             setPatient(parseInt(e.target.value));
         } else {
             toast({
@@ -48,6 +56,47 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                 duration: 9000,
                 isClosable: true,
             });
+        }
+    }
+
+    const handleFailures = (observationReq: Response) => {
+        if (observationReq.status === HTTP_UNAUTHORIZED || observationReq.status === HTTP_FORBIDDEN) {
+            sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            navigation('/', {
+                state: {
+                    redirect: true
+                }
+            });
+            return false;
+        }
+        if (observationReq.status !== HTTP_SUCCESS) {
+            setError(false);
+            return true;
+        } else {
+            setError(true);
+            return false;
+        }
+    }
+
+    const onObservationSave = async (observation: ObservationResponse) => {
+        try {
+            setLoading(true);
+            const observationReq = await fetch(`/observations`,
+                {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${sessionStorage.getItem(SESSION_STORAGE_KEY)}`
+                    },
+                    body: JSON.stringify(observation)
+                });
+            return handleFailures(observationReq);
+        } catch (err) {
+            setError(true);
+            return false;
+        } finally {
+            setLoading(false);
+            onUpdateClose();
         }
     }
 
@@ -63,22 +112,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                     },
                     body: JSON.stringify(observation)
                 });
-            if (observationReq.status === HTTP_UNAUTHORIZED || observationReq.status === HTTP_FORBIDDEN) {
-                sessionStorage.removeItem(SESSION_STORAGE_KEY);
-                navigation('/', {
-                    state: {
-                        redirect: true
-                    }
-                });
-                return false;
-            }
-            if (observationReq.status !== HTTP_SUCCESS) {
-                setError(false);
-                return true;
-            } else {
-                setError(true);
-                return false;
-            }
+            return handleFailures(observationReq);
         } catch (err) {
             setError(true);
             return false;
@@ -121,6 +155,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
         unit: string
     }
 
+    // TODO: Read this from the database
     const measurementTypes: MeasurementType[] = [
         {
             type: "heart-rate",
@@ -193,16 +228,30 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose}>Close</Button>
-                        <Button colorScheme="blue" onClick={() => onObservationUpdate(
-                            {
-                                id: observation.id,
-                                date: date.toISOString(),
-                                patient: patient,
-                                value: value,
-                                measurementType: measurementType,
-                                unit: unit
-                            }
-                        )} ml={2}>Update</Button>
+                        {
+                            isEdit && <Button colorScheme="blue" onClick={() => onObservationUpdate(
+                                {
+                                    id: observation.id,
+                                    date: date.toISOString(),
+                                    patient: patient,
+                                    value: value,
+                                    measurementType: measurementType,
+                                    unit: unit
+                                }
+                            )} ml={2}>Update</Button>
+                        }
+                        {
+                            !isEdit && <Button colorScheme="green" onClick={() => onObservationSave(
+                                {
+                                    id: observation.id,
+                                    date: date.toISOString(),
+                                    patient: patient,
+                                    value: value,
+                                    measurementType: measurementType,
+                                    unit: unit
+                                }
+                            )} ml={2}>Save</Button>
+                        }
                     </ModalFooter>
                 </ModalContent>
             </Modal>

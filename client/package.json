@@ -15,7 +15,9 @@
     "@types/node": "^16.18.59",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",
+    "@types/uuid": "^9.0.6",
     "chakra-dayzed-datepicker": "^0.2.10",
+    "crypto": "^1.0.1",
     "date-fns": "^2.30.0",
     "dayzed": "^3.2.3",
     "framer-motion": "^10.16.4",
@@ -52,5 +54,8 @@
   },
   "devDependencies": {
     "react-router-dom": "^6.17.0"
+  },
+  "browser": {
+    "crypto": false
   }
 }

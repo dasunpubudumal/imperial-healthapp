@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     {
         path: "/observations",
         element: <ObservationComponent/>,
-        errorElement: <ErrorComponent message={"Error in loading the page"} title={"Loading Error"} />
+        errorElement: <ErrorComponent message={"Error in loading the page"} title={"Loading Error"} />,
     }
 ]);
 

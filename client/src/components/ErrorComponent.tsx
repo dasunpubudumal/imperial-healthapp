@@ -1,5 +1,6 @@
 import React from 'react';
 import {Alert, AlertDescription, AlertIcon, AlertTitle} from "@chakra-ui/react";
+import {PageWrapper} from "./PageWrapper";
 
 interface ErrorComponentProps {
     message: string,
@@ -9,11 +10,13 @@ interface ErrorComponentProps {
 const ErrorComponent: React.FC<ErrorComponentProps> = ({message, title}) => {
     return (
         <>
-            <Alert status='error'>
-                <AlertIcon />
-                <AlertTitle>{title}</AlertTitle>
-                <AlertDescription>{message}</AlertDescription>
-            </Alert>
+            <PageWrapper>
+                <Alert status='error'>
+                    <AlertIcon />
+                    <AlertTitle>{title}</AlertTitle>
+                    <AlertDescription>{message}</AlertDescription>
+                </Alert>
+            </PageWrapper>
         </>
     );
 };

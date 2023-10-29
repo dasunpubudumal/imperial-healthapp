@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+    Button,
     Center,
     Flex,
     Heading,
@@ -13,14 +14,16 @@ import {
     Thead,
     Tr, useDisclosure
 } from "@chakra-ui/react";
+import { v4 as uuid } from 'uuid';
 import {PageWrapper} from "./PageWrapper";
 import {ObservationResponse} from "../util/models";
 import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
 import {useNavigate} from "react-router-dom";
 import {FaEdit} from "react-icons/fa";
 import ObservationEditComponent from "./ObservationEditComponent";
-import {DeleteIcon} from "@chakra-ui/icons";
+import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 import ObservationDeleteComponent from "./ObservationDeleteComponent";
+import {randomInt, randomUUID} from "crypto";
 
 const ObservationComponent = () => {
 
@@ -50,6 +53,11 @@ const ObservationComponent = () => {
         isOpen: isOpenDeleteModal,
         onOpen: onOpenDeleteModal,
         onClose: onCloseDeletetModal
+    } = useDisclosure();
+    const {
+        isOpen: isOpenAddModal,
+        onOpen: onOpenAddModal,
+        onClose: onCloseAddModal
     } = useDisclosure()
     const [overlay, setOverlay] = React.useState(<OverlayOne/>)
 
@@ -60,10 +68,20 @@ const ObservationComponent = () => {
         loadObservations().catch(err => setError(true));
     }
 
+    const onAddClose = () => {
+        onCloseAddModal();
+        loadObservations().catch(err => setError(true));
+    }
+
     const onEditClick = (observation: ObservationResponse) => {
         setSelectedObservation(observation);
         setOverlay(<OverlayOne/>);
         onOpen();
+    }
+
+    const onAddClick = () => {
+        setOverlay(<OverlayOne/>);
+        onOpenAddModal();
     }
 
     const onDeleteClick = (observation: ObservationResponse) => {
@@ -156,17 +174,59 @@ const ObservationComponent = () => {
                                           onClose={onClose}
                                           overlay={<OverlayOne/>}
                                           observation={selectedObservation}
-                                          key={selectedObservation.id}
+                                          key={uuid()}
                                           onUpdateClose={onUpdateClose}
+                                          isEdit={true}
                 />
                 <ObservationDeleteComponent isOpen={isOpenDeleteModal}
                                             onOpen={() => onDeleteClick(selectedObservation)}
                                             onClose={onCloseDeletetModal}
                                             overlay={<OverlayOne/>}
                                             observation={selectedObservation}
-                                            key={`#${selectedObservation.id}`}
+                                            key={uuid()}
                                             deleteObservation={() => deleteRecord(selectedObservation.id)}
                 />
+                <ObservationEditComponent
+                    isOpen={isOpenAddModal}
+                    onClose={onCloseAddModal}
+                    onUpdateClose={onAddClose}
+                    onOpen={onAddClick}
+                    overlay={<OverlayOne/>}
+                    observation={
+                        {
+                            id: '',
+                            date: (new Date()).toISOString(),
+                            patient: 101,
+                            value: 0,
+                            measurementType: 'heart-rate',
+                            unit: "beats/minute"
+                        }
+                    }
+                    key={uuid()}
+                    isEdit={false}
+                />
+                <Flex alignItems="center" justifyItems="center" alignContent="right" justifyContent="right">
+                    <Button
+                        px={4}
+                        fontSize={'sm'}
+                        rounded={'full'}
+                        bg={'green.400'}
+                        color={'white'}
+                        boxShadow={
+                            '0px 1px 25px -5px rgb(66 153 225 / 48%), 0 10px 10px -5px rgb(66 153 225 / 43%)'
+                        }
+                        _hover={{
+                            bg: 'green.500',
+                        }}
+                        _focus={{
+                            bg: 'green.500',
+                        }}
+                        rightIcon={<AddIcon />}
+                        onClick={() => onAddClick()}
+                    >
+                        Add Observation
+                    </Button>
+                </Flex>
                 <Flex alignItems="center" justifyItems="center" alignContent="center" justifyContent="center">
                     <Heading>Observations View</Heading>
                 </Flex>
