@@ -203,7 +203,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                         <FormControl mt={4}>
                             <FormLabel>Date</FormLabel>
                             <SingleDatepicker onDateChange={setDate} name="date-input"
-                                              date={new Date(observation.date)}/>
+                                              date={new Date(date)}/>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Measurement Type</FormLabel>
