@@ -9,10 +9,9 @@ import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
+import org.health.imperialhealthapp.repositories.ObservationFetchRepository;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +25,13 @@ public class ObservationService {
 
     private final ObservationRepository repository;
     private final MeasurementTypeRepository measurementTypeRepository;
+    private final ObservationFetchRepository fetchRepository;
 
-    public ObservationService(ObservationRepository repository, MeasurementTypeRepository measurementTypeRepository) {
+    public ObservationService(ObservationRepository repository, MeasurementTypeRepository measurementTypeRepository,
+                              ObservationFetchRepository fetchRepository) {
         this.repository = repository;
         this.measurementTypeRepository = measurementTypeRepository;
+        this.fetchRepository = fetchRepository;
     }
 
     /**
@@ -40,17 +42,10 @@ public class ObservationService {
      * This prevents the database O/H to query the count of total results fitting to the query criteria.
      */
     @Transactional
-    public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
+    public ResponseEntity<GeneralResult<Page<ObservationDto>>> listAll(Pageable pageable) {
         return ResponseEntity.ok(
-                GeneralResult.<Slice<ObservationDto>>builder().status(Status.SUCCESS).data(
-                        new SliceImpl<>(
-                                repository
-                                        .findAll(pageable)
-                                        .getContent()
-                                        .stream()
-                                        .map(ObservationMapper.INSTANCE::convertToDto)
-                                        .collect(Collectors.toList())
-                        )
+                GeneralResult.<Page<ObservationDto>>builder().status(Status.SUCCESS).data(
+                        fetchRepository.findAll(pageable).map(ObservationMapper.INSTANCE::convertToDto)
                 ).build()
         );
     }

@@ -2,8 +2,10 @@ package org.health.imperialhealthapp.controllers;
 
 import org.health.imperialhealthapp.config.Executor;
 import org.health.imperialhealthapp.config.GeneralResult;
+import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.services.ObservationService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ public class ObservationController {
     }
 
     @GetMapping
-    public ResponseEntity<GeneralResult<Slice<ObservationDto>>> listAll(Pageable pageable) {
+    public ResponseEntity<GeneralResult<Page<ObservationDto>>> listAll(Pageable pageable) {
         return executor.execute(() -> service.listAll(pageable));
     }
 

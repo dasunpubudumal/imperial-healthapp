@@ -3,12 +3,14 @@ package org.health.imperialhealthapp.controllers;
 import jakarta.transaction.Transactional;
 import org.health.imperialhealthapp.IntegrationTest;
 import org.health.imperialhealthapp.config.GeneralResult;
+import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,7 @@ class ObservationControllerTest extends IntegrationTest {
     @Order(2)
     @Transactional
     void listAll() {
-        ResponseEntity<GeneralResult<Slice<ObservationDto>>> generalResultResponseEntity
+        ResponseEntity<GeneralResult<Page<ObservationDto>>> generalResultResponseEntity
                 = controller.listAll(PageRequest.of(0, 1));
         assertNotNull(generalResultResponseEntity.getBody());
         assertNotNull(

@@ -5,14 +5,13 @@ import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
+import org.health.imperialhealthapp.repositories.ObservationFetchRepository;
 import org.health.imperialhealthapp.repositories.ObservationRepository;
 import org.health.imperialhealthapp.util.DateMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Date;
@@ -35,14 +34,18 @@ class ObservationServiceTest {
             MeasurementTypeRepository.class
     );
 
+    ObservationFetchRepository fetchRepository = mock(
+            ObservationFetchRepository.class
+    );
+
     String uuid = UUID.randomUUID().toString();
 
     ObservationService service;
 
     @BeforeEach
     void setUp() {
-        when(repository.findAll(any()))
-                .thenReturn(new SliceImpl<>(
+        when(fetchRepository.findAll(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(
                         List.of(
                                 Observation.builder()
                                         .id(UUID.fromString(uuid))
@@ -53,15 +56,7 @@ class ObservationServiceTest {
                                         .build()
                         )
                 ));
-        when(repository.findById(any())).thenReturn(
-                Optional.ofNullable(Observation.builder()
-                        .id(UUID.fromString(uuid))
-                        .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
-                        .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
-                        .patient(1)
-                        .value(10.2)
-                        .build())
-        );
+
         when(measurementTypeRepository.findByMeasurementType(any()))
                 .thenReturn(
                         Optional.of(MeasurementType.builder().measurementType("rate").unit("ss").build())
@@ -75,13 +70,13 @@ class ObservationServiceTest {
                         .value(10.2)
                         .build()
         );
-        service = new ObservationService(repository, measurementTypeRepository);
+        service = new ObservationService(repository, measurementTypeRepository, fetchRepository);
     }
 
     @Test
     @DisplayName("Check listing all observations")
     void listAll() {
-        ResponseEntity<GeneralResult<Slice<ObservationDto>>> generalResultResponseEntity = service.listAll(
+        ResponseEntity<GeneralResult<Page<ObservationDto>>> generalResultResponseEntity = service.listAll(
                 PageRequest.of(0, 1)
         );
         assertTrue(Objects.nonNull(generalResultResponseEntity.getBody()));

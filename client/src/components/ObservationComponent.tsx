@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
+    Box,
     Button,
     Center,
     Flex,
     Heading,
     IconButton,
     ModalOverlay,
-    Skeleton,
+    Skeleton, Spacer,
     Table,
     TableContainer,
     Tbody,
@@ -21,7 +22,7 @@ import {PageWrapper} from "./PageWrapper";
 import {ObservationResponse} from "../util/models";
 import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
 import {useNavigate} from "react-router-dom";
-import {FaEdit} from "react-icons/fa";
+import {FaArrowLeft, FaArrowRight, FaEdit} from "react-icons/fa";
 import ObservationEditComponent from "./ObservationEditComponent";
 import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 import ObservationDeleteComponent from "./ObservationDeleteComponent";
@@ -127,7 +128,7 @@ const ObservationComponent = () => {
         try {
             setLoading(true);
             setError(false);
-            const observationsReq = await fetch(`/api/observations?page=${encodeURIComponent(0)}&size=${20}`,
+            const observationsReq = await fetch(`/api/observations?page=${encodeURIComponent(0)}&size=${4}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -222,7 +223,7 @@ const ObservationComponent = () => {
                         _focus={{
                             bg: 'green.500',
                         }}
-                        rightIcon={<AddIcon />}
+                        rightIcon={<AddIcon/>}
                         onClick={() => onAddClick()}
                     >
                         Add Observation
@@ -273,6 +274,13 @@ const ObservationComponent = () => {
                                 </Tbody>
                             </Table>
                         </Skeleton>
+                        <Flex mt={2} gap={2} alignItems="right" justifyItems="right" alignContent="right"
+                              justifyContent="right">
+                            <IconButton variant='outline' isRound={true} aria-label={"next"} colorScheme='teal'
+                                        icon={<FaArrowLeft/>}/>
+                            <IconButton variant='outline' isRound={true} aria-label={"next"} colorScheme='teal'
+                                        icon={<FaArrowRight/>}/>
+                        </Flex>
                     </TableContainer>
                 </Center>
             </PageWrapper>
