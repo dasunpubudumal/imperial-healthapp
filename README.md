@@ -74,3 +74,21 @@ The initial data model for `Observations` is as follows:
 |    heart-rate    |  beats/minute   |
 | skin-temperature | degrees Celsius |
 | respiratory-rate | breaths/minute  |
+
+---
+## Notes
+
+- The current application _does not_ perform persistence of patients. Thus, the patients are hard-coded at this point.
+  - If patients are to be persisted, a new table `patients` can be added and its primary key will be related to `observations.patient` through a foreign key constraint.
+- The application _does_ perform authentication and authorization.
+  - Authentication is provided via a `users` table through traditional `(username, password)` combination.
+  - Authorization is provided via a `JWT` token validated through a security chain in Spring.
+    - Authorization is completely _stateless_. No token storage - either in-memory nor persisted - occur.
+    - [Spring OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html) was used to facilitate JWT generation, validation and verification.
+  - By default, a user with credentials `admin/admin` is populated upon application start. This user has `ADMIN` privileges.
+    - API endpoints currently aren't pre-authorized for different roles, although the infrastructure allows it.
+- JPA connects the business-logic to the data-layer. Therefore, no JDBC SQL-level logic are present in the codebase.
+- The application is dockerized. Thus, it could be run via spinning up a set of containers as specified in the `docker-compose.yml` manifest.
+  - The application is seeded with some roles and observations upon startup.
+- The `GET /api/observations` API is paginated, and pages can be traversed through the UI.
+  - Since the seeding process seed a low count of data, the UI queries from API with the page size as `5` (i.e., `5` records per page).
