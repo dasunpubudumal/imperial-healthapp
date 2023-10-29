@@ -1,6 +1,6 @@
 'use client';
 
-import {Box, Text, Image, Flex, Heading, HStack, Center, Spacer, Button} from "@chakra-ui/react";
+import {Box, Button, Flex, Image, Spacer} from "@chakra-ui/react";
 import React from "react";
 import {FaSignOutAlt} from "react-icons/fa";
 import {SESSION_STORAGE_KEY} from "../util/constants";

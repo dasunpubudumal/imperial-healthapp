@@ -4,7 +4,8 @@ import {
     Center,
     Flex,
     Heading,
-    IconButton, ModalOverlay,
+    IconButton,
+    ModalOverlay,
     Skeleton,
     Table,
     TableContainer,
@@ -12,9 +13,10 @@ import {
     Td,
     Th,
     Thead,
-    Tr, useDisclosure
+    Tr,
+    useDisclosure
 } from "@chakra-ui/react";
-import { v4 as uuid } from 'uuid';
+import {v4 as uuid} from 'uuid';
 import {PageWrapper} from "./PageWrapper";
 import {ObservationResponse} from "../util/models";
 import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
@@ -23,7 +25,6 @@ import {FaEdit} from "react-icons/fa";
 import ObservationEditComponent from "./ObservationEditComponent";
 import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 import ObservationDeleteComponent from "./ObservationDeleteComponent";
-import {randomInt, randomUUID} from "crypto";
 
 const ObservationComponent = () => {
 

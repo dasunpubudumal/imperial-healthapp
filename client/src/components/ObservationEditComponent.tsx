@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
 import {
-    Button, FormControl, FormLabel, Input,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
     ModalContent,
     ModalFooter,
-    ModalHeader, Select,
+    ModalHeader,
+    Select,
     useToast
 } from "@chakra-ui/react";
 import {ObservationResponse} from "../util/models";
