@@ -56,7 +56,15 @@ class ObservationServiceTest {
                                         .build()
                         )
                 ));
-
+        when(repository.findById(any())).thenReturn(
+                Optional.ofNullable(Observation.builder()
+                        .id(UUID.fromString(uuid))
+                        .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
+                        .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
+                        .patient(1)
+                        .value(10.2)
+                        .build())
+        );
         when(measurementTypeRepository.findByMeasurementType(any()))
                 .thenReturn(
                         Optional.of(MeasurementType.builder().measurementType("rate").unit("ss").build())
