@@ -55,6 +55,11 @@ const ObservationComponent = () => {
 
     const navigation = useNavigate();
 
+    const onUpdateClose = () => {
+        onClose();
+        loadObservations().catch(err => setError(true));
+    }
+
     const onEditClick = (observation: ObservationResponse) => {
         setSelectedObservation(observation);
         setOverlay(<OverlayOne/>);
@@ -152,6 +157,7 @@ const ObservationComponent = () => {
                                           overlay={<OverlayOne/>}
                                           observation={selectedObservation}
                                           key={selectedObservation.id}
+                                          onUpdateClose={onUpdateClose}
                 />
                 <ObservationDeleteComponent isOpen={isOpenDeleteModal}
                                             onOpen={() => onDeleteClick(selectedObservation)}

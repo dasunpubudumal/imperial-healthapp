@@ -11,23 +11,30 @@ import {
 } from "@chakra-ui/react";
 import {ObservationResponse} from "../util/models";
 import {SingleDatepicker} from "chakra-dayzed-datepicker";
+import {HTTP_FORBIDDEN, HTTP_SUCCESS, HTTP_UNAUTHORIZED, SESSION_STORAGE_KEY} from "../util/constants";
+import {useNavigate} from "react-router-dom";
 
 interface ObservationEditProps {
     isOpen: boolean;
     onClose: () => void;
+    onUpdateClose: () => void;
     onOpen: (selectedObservation: any) => void;
     overlay: React.ReactNode;
     observation: ObservationResponse
 }
 
-const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpen, onClose, overlay, observation}) => {
+const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpen, onUpdateClose, onClose, overlay, observation}) => {
 
     const [date, setDate] = useState<Date>(new Date());
     const [patient, setPatient] = useState<number>(observation.patient);
     const [measurementType, setMeasurementType] = useState<string>(observation.measurementType);
     const [unit, setUnit] = useState<string>(observation.unit);
+    const [error, setError] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [value, setValue] = useState<number>(observation.value);
 
     const toast = useToast();
+    const navigation = useNavigate();
 
     const onPatientSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value && e.target.value.length > 0) {
@@ -41,6 +48,43 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                 duration: 9000,
                 isClosable: true,
             });
+        }
+    }
+
+    const onObservationUpdate = async (observation: ObservationResponse) => {
+        try {
+            setLoading(true);
+            const observationReq = await fetch(`/observations/${observation.id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${sessionStorage.getItem(SESSION_STORAGE_KEY)}`
+                    },
+                    body: JSON.stringify(observation)
+                });
+            if (observationReq.status === HTTP_UNAUTHORIZED || observationReq.status === HTTP_FORBIDDEN) {
+                sessionStorage.removeItem(SESSION_STORAGE_KEY);
+                navigation('/', {
+                    state: {
+                        redirect: true
+                    }
+                });
+                return false;
+            }
+            if (observationReq.status !== HTTP_SUCCESS) {
+                setError(false);
+                return true;
+            } else {
+                setError(true);
+                return false;
+            }
+        } catch (err) {
+            setError(true);
+            return false;
+        } finally {
+            setLoading(false);
+            onUpdateClose();
         }
     }
 
@@ -79,15 +123,15 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
 
     const measurementTypes: MeasurementType[] = [
         {
-            type:  "heart-rate",
+            type: "heart-rate",
             unit: "beats/minute"
         },
         {
-            type:  "skin-temperature",
+            type: "skin-temperature",
             unit: "degrees Celcius"
         },
         {
-            type:  "respiratory-rate",
+            type: "respiratory-rate",
             unit: "breaths/minute"
         },
     ]
@@ -124,11 +168,19 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Measurement Type</FormLabel>
-                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect} value={measurementType}>
+                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect}
+                                    value={measurementType}>
                                 {measurementTypes.map((option, idx) => (
                                     <option key={idx} value={option.type}>{option.type}</option>
                                 ))}
                             </Select>
+                        </FormControl>
+                        <FormControl mt={4}>
+                            <FormLabel>Value</FormLabel>
+                            <Input placeholder="Value" onChange={(e) => {
+                                if (e.target.value && e.target.value.length > 0) setValue(parseInt(e.target.value));
+                                else setValue(observation.value);
+                            }} value={value}/>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Unit</FormLabel>
@@ -141,6 +193,16 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                     </ModalBody>
                     <ModalFooter>
                         <Button onClick={onClose}>Close</Button>
+                        <Button colorScheme="blue" onClick={() => onObservationUpdate(
+                            {
+                                id: observation.id,
+                                date: date.toISOString(),
+                                patient: patient,
+                                value: value,
+                                measurementType: measurementType,
+                                unit: unit
+                            }
+                        )} ml={2}>Update</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
