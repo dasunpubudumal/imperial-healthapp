@@ -93,7 +93,7 @@ const ObservationComponent = () => {
 
     const deleteRecord = async (observationId: string): Promise<boolean> => {
         try {
-            const deleteReq = await fetch(`/observations/${observationId}`, {
+            const deleteReq = await fetch(`/api/observations/${observationId}`, {
                 method: 'DELETE',
                 headers: {
                     "Content-Type": "application/json",
@@ -127,7 +127,7 @@ const ObservationComponent = () => {
         try {
             setLoading(true);
             setError(false);
-            const observationsReq = await fetch(`/observations?page=${encodeURIComponent(0)}&size=${20}`,
+            const observationsReq = await fetch(`/api/observations?page=${encodeURIComponent(0)}&size=${20}`,
                 {
                     headers: {
                         "Content-Type": "application/json",

@@ -85,7 +85,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
     const onObservationSave = async (observation: ObservationResponse) => {
         try {
             setLoading(true);
-            const observationReq = await fetch(`/observations`,
+            const observationReq = await fetch(`/api/observations`,
                 {
                     method: 'POST',
                     headers: {
@@ -107,7 +107,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
     const onObservationUpdate = async (observation: ObservationResponse) => {
         try {
             setLoading(true);
-            const observationReq = await fetch(`/observations/${observation.id}`,
+            const observationReq = await fetch(`/api/observations/${observation.id}`,
                 {
                     method: 'PUT',
                     headers: {

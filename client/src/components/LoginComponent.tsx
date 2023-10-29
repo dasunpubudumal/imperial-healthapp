@@ -40,7 +40,7 @@ const LoginComponent = () => {
         let error: boolean = false;
         try {
             setLoading(true);
-            const fetchReq = await fetch('/auth/login', {
+            const fetchReq = await fetch('/api/auth/login', {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: {

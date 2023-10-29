@@ -52,7 +52,7 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/**", "/", "/observations/*").permitAll();
+                    auth.requestMatchers("/auth/**", "/**", "/observations/*").permitAll();
                     auth.anyRequest().authenticated();
                 }).oauth2ResourceServer(oauth ->
                         oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
