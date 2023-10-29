@@ -84,7 +84,7 @@ const LoginComponent = () => {
     return (
         <>
             {
-                location.state.redirect &&
+                location.state && location.state.redirect &&
                 <ErrorComponent message="Please login again" title="Token expired."/>
             }
             {

@@ -25,6 +25,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
     const [date, setDate] = useState<Date>(new Date());
     const [patient, setPatient] = useState<number>(observation.patient);
     const [measurementType, setMeasurementType] = useState<string>(observation.measurementType);
+    const [unit, setUnit] = useState<string>(observation.unit);
 
     const toast = useToast();
 
@@ -42,10 +43,12 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
             });
         }
     }
+
     const onMeasurementTypeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         if (e.target.value && e.target.value.length > 0) {
             console.log(`Setting measurement type: ${e.target.value}`);
             setMeasurementType(e.target.value);
+            onUnitSelect(e);
         } else {
             toast({
                 title: "Invalid measurement type.",
@@ -69,10 +72,33 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
         130
     ];
 
-    const measurementTypes = {
-        "heart-rate": "beats/minute",
-        "skin-temperature": "degrees Celcius",
-        "respiratory-rate": "breaths/minute"
+    interface MeasurementType {
+        type: string;
+        unit: string
+    }
+
+    const measurementTypes: MeasurementType[] = [
+        {
+            type:  "heart-rate",
+            unit: "beats/minute"
+        },
+        {
+            type:  "skin-temperature",
+            unit: "degrees Celcius"
+        },
+        {
+            type:  "respiratory-rate",
+            unit: "breaths/minute"
+        },
+    ]
+
+
+    const onUnitSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const measurement: MeasurementType | undefined = measurementTypes
+            .find(measurement => measurement.type === e.target.value);
+        if (measurement) {
+            setUnit(measurement.unit);
+        }
     }
 
     return (
@@ -98,9 +124,17 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({isOpen, onOpe
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Measurement Type</FormLabel>
-                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect} value={measurementType} disabled={true}>
-                                {Object.keys(measurementTypes).map((option, idx) => (
-                                    <option key={idx} value={option}>{option}</option>
+                            <Select placeholder='Select Patient' onChange={onMeasurementTypeSelect} value={measurementType}>
+                                {measurementTypes.map((option, idx) => (
+                                    <option key={idx} value={option.type}>{option.type}</option>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl mt={4}>
+                            <FormLabel>Unit</FormLabel>
+                            <Select placeholder='Select Patient' onChange={onUnitSelect} value={unit} disabled={true}>
+                                {Object.values(measurementTypes).map((option, idx) => (
+                                    <option key={idx} value={option.unit}>{option.unit}</option>
                                 ))}
                             </Select>
                         </FormControl>
