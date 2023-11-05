@@ -1,7 +1,6 @@
 package org.health.imperialhealthapp.mapper;
 
-import jdk.jfr.Name;
-import org.h2.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
@@ -33,7 +32,7 @@ public interface ObservationMapper {
 
     @Named("mapIdDomain")
     default UUID mapIdDomain(String id) {
-        if (!StringUtils.isNullOrEmpty(id)) {
+        if (!StringUtils.isEmpty(id)) {
             return UUID.fromString(id);
         }
         return null;
