@@ -3,6 +3,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 DROP TABLE IF EXISTS observations;
 DROP TABLE IF EXISTS measurement_types;
 
+CREATE TABLE patients
+(
+    patient_id              INTEGER PRIMARY KEY,
+    first_name      VARCHAR(255),
+    last_name       VARCHAR(255)
+);
+
 CREATE TABLE measurement_types
 (
     measurement_type VARCHAR(255) PRIMARY KEY,
@@ -12,10 +19,9 @@ CREATE TABLE measurement_types
 CREATE TABLE observations
 (
     id               uuid DEFAULT uuid_generate_v4(),
-    measurement_type VARCHAR(255) REFERENCES measurement_types(measurement_type
-        ),
+    measurement_type VARCHAR(255) REFERENCES measurement_types(measurement_type),
     date             TIMESTAMP WITH TIME ZONE,
-    patient          INTEGER,
+    patient          INTEGER REFERENCES patients(patient_id),
     value            DOUBLE PRECISION,
     PRIMARY KEY (id)
 );

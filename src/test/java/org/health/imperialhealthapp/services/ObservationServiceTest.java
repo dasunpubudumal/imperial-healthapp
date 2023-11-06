@@ -3,6 +3,7 @@ package org.health.imperialhealthapp.services;
 import org.health.imperialhealthapp.config.GeneralResult;
 import org.health.imperialhealthapp.models.domain.MeasurementType;
 import org.health.imperialhealthapp.models.domain.Observation;
+import org.health.imperialhealthapp.models.domain.Patient;
 import org.health.imperialhealthapp.models.dto.ObservationDto;
 import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
 import org.health.imperialhealthapp.repositories.ObservationFetchRepository;
@@ -51,7 +52,7 @@ class ObservationServiceTest {
                                         .id(UUID.fromString(uuid))
                                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
                                         .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
-                                        .patient(1)
+                                        .patient(Patient.builder().id(1).build())
                                         .value(10.2)
                                         .build()
                         )
@@ -61,7 +62,7 @@ class ObservationServiceTest {
                         .id(UUID.fromString(uuid))
                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
                         .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
-                        .patient(1)
+                        .patient(Patient.builder().id(1).build())
                         .value(10.2)
                         .build())
         );
@@ -74,7 +75,7 @@ class ObservationServiceTest {
                         .id(UUID.fromString(uuid))
                         .measurementType(MeasurementType.builder().measurementType("x").unit("y").build())
                         .date(DateMapper.asDate("2023-09-05T15:12:23Z"))
-                        .patient(1)
+                        .patient(Patient.builder().id(1).build())
                         .value(10.2)
                         .build()
         );

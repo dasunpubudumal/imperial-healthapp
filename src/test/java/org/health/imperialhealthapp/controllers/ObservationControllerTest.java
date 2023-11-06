@@ -9,11 +9,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
 
@@ -49,6 +52,7 @@ class ObservationControllerTest extends IntegrationTest {
     @DisplayName("Check if listAll() method works")
     @Order(2)
     @Transactional
+    @WithMockUser(roles = "USER")
     void listAll() {
         ResponseEntity<GeneralResult<Page<ObservationDto>>> generalResultResponseEntity
                 = controller.listAll(PageRequest.of(0, 1));
@@ -66,6 +70,7 @@ class ObservationControllerTest extends IntegrationTest {
     @DisplayName("Check if getById() method works")
     @Order(3)
     @Transactional
+    @WithMockUser(roles = "USER")
     void listOne() {
         String uuid = "a94d682f-e537-4d87-829f-c6d2af2ca0fc";
         ResponseEntity<GeneralResult<ObservationDto>> byId = controller.getById(uuid);
@@ -85,6 +90,7 @@ class ObservationControllerTest extends IntegrationTest {
     @DisplayName("Check if save method works")
     @Order(4)
     @Transactional
+    @WithMockUser(roles = "USER")
     void save() {
         try {
             controller.save(observationDto);
@@ -104,6 +110,7 @@ class ObservationControllerTest extends IntegrationTest {
     @DisplayName("Check if update method works")
     @Order(5)
     @Transactional
+    @WithMockUser(roles = "USER")
     void update() {
         try {
             controller.save(observationDto);
@@ -118,6 +125,7 @@ class ObservationControllerTest extends IntegrationTest {
     @DisplayName("Check if delete method works")
     @Order(6)
     @Transactional
+    @WithMockUser(roles = {"USER", "ADMIN"})
     void delete() {
         try {
             controller.save(observationDto);

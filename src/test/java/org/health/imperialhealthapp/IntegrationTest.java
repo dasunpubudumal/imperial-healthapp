@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 // used to re-initialize applicationContext, because testcontainer will be restarted with different exposed ports
 @Testcontainers
 @ContextConfiguration(initializers = IntegrationTest.TestcontainersInitializer.class)
+@TestPropertySource(properties = "security.enabled=false")
 public abstract class IntegrationTest {
 
     static {

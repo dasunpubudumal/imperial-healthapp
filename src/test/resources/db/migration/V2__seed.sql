@@ -1,3 +1,27 @@
+INSERT INTO patients
+(
+    patient_id,
+ first_name,
+ last_name
+)
+VALUES (101, 'Patient', 'One');
+
+INSERT INTO patients
+(
+    patient_id,
+    first_name,
+    last_name
+)
+VALUES (102, 'Patient', 'Two');
+
+INSERT INTO patients
+(
+    patient_id,
+    first_name,
+    last_name
+)
+VALUES (103, 'Patient', 'Three');
+
 INSERT INTO measurement_types
 (measurement_type,
  unit)

@@ -3,10 +3,7 @@ package org.health.imperialhealthapp;
 import lombok.extern.slf4j.Slf4j;
 import org.health.imperialhealthapp.models.domain.Role;
 import org.health.imperialhealthapp.models.domain.User;
-import org.health.imperialhealthapp.repositories.MeasurementTypeRepository;
-import org.health.imperialhealthapp.repositories.ObservationRepository;
-import org.health.imperialhealthapp.repositories.RoleRepository;
-import org.health.imperialhealthapp.repositories.UserRepository;
+import org.health.imperialhealthapp.repositories.*;
 import org.health.imperialhealthapp.util.FakeObservationGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,13 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.health.imperialhealthapp.util.Initializer.initializeMeasurementTypes;
+import static org.health.imperialhealthapp.util.Initializer.*;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -37,18 +35,24 @@ public class ImperialHealthappApplication {
 	private String environment;
 
 	@Bean
+	@Transactional
 	CommandLineRunner run(
 			UserRepository userRepository,
 			RoleRepository roleRepository,
 			PasswordEncoder bCryptPasswordEncoder,
 			MeasurementTypeRepository measurementTypeRepository,
-			ObservationRepository observationRepository) {
+			ObservationRepository observationRepository,
+			PatientRepository patientRepository) {
 		String adminPw = bCryptPasswordEncoder.encode("admin");
 		String userPw = bCryptPasswordEncoder.encode("user");
 		log.info("Environment: {}", environment);
 		log.info("Encoded password: {}", adminPw);
+		log.info("Starting application...");
 		return args -> {
 			initializeMeasurementTypes(measurementTypeRepository);
+			intializePatients(patientRepository);
+			if (Objects.nonNull(environment) && !environment.equals("dev"))
+				initializeObservations(observationRepository);
 			if (roleRepository.findByRoleName("ADMIN").isPresent()) return;
 			Role adminRole = roleRepository.save(
 					Role.builder().roleName("ADMIN").build()
@@ -73,10 +77,6 @@ public class ImperialHealthappApplication {
 					.roles(userRoles)
 					.build();
 			userRepository.saveAll(List.of(adminUser, normalUser));
-			if (Objects.nonNull(environment) && !environment.equals("dev"))
-				observationRepository.saveAll(FakeObservationGenerator.generateObservations());
-			else {
-			}
 		};
 	}
 

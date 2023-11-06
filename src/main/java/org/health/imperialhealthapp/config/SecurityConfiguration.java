@@ -52,6 +52,7 @@ public class SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/patients/**").authenticated();
                     auth.requestMatchers("/api/observations/**").authenticated();
                     auth.anyRequest().permitAll();
                 }).oauth2ResourceServer(oauth ->

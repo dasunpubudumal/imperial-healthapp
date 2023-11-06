@@ -3,7 +3,6 @@ package org.health.imperialhealthapp.models.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,13 +20,14 @@ public class Observation {
     private UUID id;
     @Column(name = "date")
     private OffsetDateTime date;
-    @Column(name = "patient")
-    private Integer patient;
     @Column(name = "value")
     private Double value;
     @ManyToOne
     @JoinColumn(name = "measurement_type", updatable = false)
     private MeasurementType measurementType;
+    @ManyToOne
+    @JoinColumn(name = "patient_id", updatable = false)
+    private Patient patient;
 
     @PrePersist
     private void uuid() {
