@@ -80,6 +80,7 @@ public class AuthenticationService {
     @Transactional
     public ResponseEntity<GeneralResult<Void>> register(RegisterRequest request) {
         try {
+            log.info("Registering user: {}", request.getUsername());
             String role = request.getRole();
             Role roleExists = roleRepository.findByRoleName(role).orElseThrow(() -> new InvalidRequestException(
                     "Role not found"
@@ -91,8 +92,7 @@ public class AuthenticationService {
                     .lastName(request.getLastName())
                     .password(encoder.encode(request.getPassword()))
                     .build();
-            User save = userRepository.save(user);
-            System.out.println(save);
+            userRepository.save(user);
             return ResponseEntity.ok(
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()
             );

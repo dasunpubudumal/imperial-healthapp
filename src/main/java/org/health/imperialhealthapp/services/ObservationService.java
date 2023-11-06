@@ -1,5 +1,6 @@
 package org.health.imperialhealthapp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.health.imperialhealthapp.exceptions.InternalServerException;
 import org.health.imperialhealthapp.exceptions.InvalidRequestException;
 import org.health.imperialhealthapp.mapper.ObservationMapper;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ObservationService {
 
     private final ObservationRepository repository;
@@ -58,6 +60,7 @@ public class ObservationService {
     @Transactional
     public ResponseEntity<GeneralResult<ObservationDto>> findById(String id) {
         if (Objects.isNull(id)) {
+            log.error("ID {} not found in the request.", id);
             throw new InvalidRequestException(
                     "ID not found in the request!"
             );
@@ -69,6 +72,7 @@ public class ObservationService {
         ));
         ObservationDto convertedToDto = ObservationMapper.INSTANCE.convertToDto(observation);
         if (Objects.isNull(convertedToDto)) {
+            log.error("DTO Conversion failed.");
             throw new InternalServerException();
         }
         return ResponseEntity.ok(
@@ -159,6 +163,7 @@ public class ObservationService {
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()
             );
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new InternalServerException();
         }
     }
