@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -42,9 +43,10 @@ public class ImperialHealthappApplication {
 			PasswordEncoder bCryptPasswordEncoder,
 			MeasurementTypeRepository measurementTypeRepository,
 			ObservationRepository observationRepository) {
-		String encode = bCryptPasswordEncoder.encode("admin");
+		String adminPw = bCryptPasswordEncoder.encode("admin");
+		String userPw = bCryptPasswordEncoder.encode("user");
 		log.info("Environment: {}", environment);
-		log.info("Encoded password: {}", encode);
+		log.info("Encoded password: {}", adminPw);
 		return args -> {
 			initializeMeasurementTypes(measurementTypeRepository);
 			if (roleRepository.findByRoleName("ADMIN").isPresent()) return;
@@ -55,14 +57,22 @@ public class ImperialHealthappApplication {
 					Role.builder().roleName("USER").build()
 			);
 			Set<Role> adminRoles = Set.of(adminRole, userRole);
+			Set<Role> userRoles = Set.of(userRole);
 			User adminUser = User.builder()
 					.username("admin")
-					.password(encode)
+					.password(adminPw)
 					.firstName("Admin")
 					.lastName("Admin")
 					.roles(adminRoles)
 					.build();
-			userRepository.save(adminUser);
+			User normalUser = User.builder()
+					.username("user")
+					.password(userPw)
+					.firstName("User")
+					.lastName("User")
+					.roles(userRoles)
+					.build();
+			userRepository.saveAll(List.of(adminUser, normalUser));
 			if (Objects.nonNull(environment) && !environment.equals("dev"))
 				observationRepository.saveAll(FakeObservationGenerator.generateObservations());
 			else {
