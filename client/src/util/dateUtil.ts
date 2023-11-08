@@ -5,15 +5,7 @@ export interface DateModel {
 }
 
 export const extractTime = (dateString: string): DateModel => {
-    const date: Date = new Date(Date.UTC(
-        new Date(dateString).getUTCFullYear(),
-        new Date(dateString).getUTCMonth(),
-        new Date(dateString).getUTCDate(),
-        new Date(dateString).getUTCHours(),
-        new Date(dateString).getUTCMinutes(),
-        new Date(dateString).getUTCSeconds(),
-        new Date(dateString).getUTCMilliseconds()
-    ));
+    const date: Date = new Date(dateString);
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes()
     const seconds = date.getUTCSeconds();
