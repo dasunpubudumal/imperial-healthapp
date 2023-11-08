@@ -55,7 +55,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
     const [unit, setUnit] = useState<string>(observation.unit);
     const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [value, setValue] = useState<string>(observation.value.toString());
+    const [value, setValue] = useState<string>(observation.value ? observation.value.toString() : "0");
     const [hours, setHours] = useState<string>(extractTime(observation.date).h);
     const [minutes, setMinutes] = useState<string>(extractTime(observation.date).m);
 
