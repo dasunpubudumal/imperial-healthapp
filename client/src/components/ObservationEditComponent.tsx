@@ -40,13 +40,22 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                                                       isEdit
                                                                   }) => {
 
-    const [date, setDate] = useState<Date>(new Date(observation.date));
+    const [date, setDate] = useState<Date>(new Date(Date.UTC(
+        new Date(observation.date).getUTCFullYear(),
+        new Date(observation.date).getUTCMonth(),
+        new Date(observation.date).getUTCDate(),
+        new Date(observation.date).getUTCHours(),
+        new Date(observation.date).getUTCMinutes(),
+        new Date(observation.date).getUTCSeconds(),
+        new Date(observation.date).getUTCMilliseconds()
+        )
+    ));
     const [patient, setPatient] = useState<number>(observation.patient);
     const [measurementType, setMeasurementType] = useState<string>(observation.measurementType);
     const [unit, setUnit] = useState<string>(observation.unit);
     const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [value, setValue] = useState<number>(observation.value);
+    const [value, setValue] = useState<string>(observation.value.toString());
     const [hours, setHours] = useState<string>(extractTime(observation.date).h);
     const [minutes, setMinutes] = useState<string>(extractTime(observation.date).m);
 
@@ -247,8 +256,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                         <FormControl mt={4}>
                             <FormLabel>Value</FormLabel>
                             <Input placeholder="Value" onChange={(e) => {
-                                if (e.target.value && e.target.value.length > 0) setValue(parseInt(e.target.value));
-                                else setValue(observation.value);
+                                setValue(e.target.value);
                             }} value={value}/>
                         </FormControl>
                         <FormControl mt={4}>
@@ -268,7 +276,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                     id: observation.id,
                                     date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
-                                    value: value,
+                                    value: parseFloat(value),
                                     measurementType: measurementType,
                                     unit: unit
                                 }
@@ -280,7 +288,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                     id: observation.id,
                                     date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
-                                    value: value,
+                                    value: parseFloat(value),
                                     measurementType: measurementType,
                                     unit: unit
                                 }
