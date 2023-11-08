@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {
     Box,
     Button, Flex,
-    FormControl,
+    FormControl, FormErrorMessage, FormHelperText,
     FormLabel,
     Input,
     Modal,
@@ -61,6 +61,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
 
     const toast = useToast();
     const navigation = useNavigate();
+    const isValueError = value === ''
 
     const checkValidHours = hours.length === 0 || minutes.length === 0
         || (hours.length == 2 && parseInt(hours) > 23) || (minutes.length == 2 && parseInt(minutes) > 59);
@@ -93,6 +94,18 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                 isClosable: true,
             });
         }
+    }
+
+    const errorOcurred = (message: string) => {
+        setError(true);
+        toast({
+            title: 'Error.',
+            description: message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+        })
+        setError(false);
     }
 
     const handleFailures = (observationReq: Response) => {
@@ -216,6 +229,12 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
         }
     }
 
+    const customFloat  = (value: string) => {
+        if (value) return parseFloat(value);
+        else errorOcurred("Error in value field.");
+        return 0;
+    }
+
     return (
         <>
             <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -253,11 +272,18 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                 ))}
                             </Select>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={isValueError}>
                             <FormLabel>Value</FormLabel>
                             <Input placeholder="Value" onChange={(e) => {
                                 setValue(e.target.value);
                             }} value={value}/>
+                            {!isValueError ? (
+                                <FormHelperText>
+                                    Value of the parameter.
+                                </FormHelperText>
+                            ) : (
+                                <FormErrorMessage>Value is required.</FormErrorMessage>
+                            )}
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Unit</FormLabel>
@@ -276,7 +302,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                     id: observation.id,
                                     date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
-                                    value: parseFloat(value),
+                                    value: customFloat(value),
                                     measurementType: measurementType,
                                     unit: unit
                                 }
@@ -288,7 +314,7 @@ const ObservationEditComponent: React.FC<ObservationEditProps> = ({
                                     id: observation.id,
                                     date: (concatenateDate(date, hours, minutes)).toISOString().split('.')[0] + "Z",
                                     patient: patient,
-                                    value: parseFloat(value),
+                                    value: customFloat(value),
                                     measurementType: measurementType,
                                     unit: unit
                                 }
