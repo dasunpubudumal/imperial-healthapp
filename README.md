@@ -10,6 +10,14 @@ The assessment comprises of a task to develop a CRUD application for:
 
 The data-layer was modeled using [PostgreSQL](https://www.postgresql.org/) and the business-logic was intended to be modeled using [Spring Framework](https://spring.io/projects/spring-framework). [React](https://react.dev/) was used to develop the front-end, because it helps to segregate components and makes data-flow between components easy and concise. In other words, React enforces structure to the UI through components and rules.
 
+---
+# Starting the application
+
+1. Clone the respository.
+2. Execute `npm i && npm run build` in `client` directory.
+3. Execute `mvn clean install` in the root directory.
+4. Run `docker-compose up --build`
+---
 # Data Modeling
 
 The initial data model for `Observations` is as follows:
