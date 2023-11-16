@@ -32,6 +32,11 @@ public class PatientController {
         return executor.execute(() -> service.savePatient(patientDto));
     }
 
+
+    public ResponseEntity<GeneralResult<Void>> updatePatient(@RequestBody PatientDto patientDto, @PathVariable(value = "id") String id) {
+        return executor.execute(() -> service.updatePatient(patientDto, id));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<GeneralResult<Void>> deletePatient(@PathVariable(value = "id") Integer id) {

@@ -68,4 +68,21 @@ public class PatientService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<GeneralResult<Void>> updatePatient(PatientDto patientDto, String id) {
+        if (Objects.isNull(id)) throw new InvalidRequestException("Invalid ID");
+        try {
+            repository
+                    .findById(Integer.parseInt(id))
+                    .orElseThrow(() -> new InvalidRequestException("Patient with given ID does not exist!"));
+            repository.save(PatientMapper.INSTANCE.convertToDao(
+                    patientDto
+            ));
+            return ResponseEntity.ok(
+                    GeneralResult.<Void>builder().status(Status.SUCCESS).build()
+            );
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRequestException("Patient with given ID does not exist!");
+        }
+    }
 }
