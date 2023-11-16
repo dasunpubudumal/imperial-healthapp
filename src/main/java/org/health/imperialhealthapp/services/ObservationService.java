@@ -101,6 +101,7 @@ public class ObservationService {
                             () -> new InvalidRequestException("Measurement type not found")
             );
             convert.setMeasurementType(measurementType);
+            repository.save(convert);
             return ResponseEntity.ok(
                     GeneralResult.<Void>builder().status(Status.SUCCESS).build()
             );

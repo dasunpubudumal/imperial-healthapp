@@ -194,6 +194,7 @@ const ObservationComponent = () => {
     return (
         <>
             <PageWrapper>
+                {/* Model to edit existing observations */}
                 <ObservationEditComponent isOpen={isOpen}
                                           onOpen={() => onEditClick(selectedObservation)}
                                           onClose={onClose}
@@ -211,6 +212,7 @@ const ObservationComponent = () => {
                                             key={uuid()}
                                             deleteObservation={() => deleteRecord(selectedObservation.id)}
                 />
+                {/* Modal to add new observations */}
                 <ObservationEditComponent
                     isOpen={isOpenAddModal}
                     onClose={onCloseAddModal}
